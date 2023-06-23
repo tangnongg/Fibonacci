@@ -60,7 +60,33 @@ class SqList{
             }
         }
     }
+
+    void bubbleSort(bool order){
+        bool swapFlag=1;
+        for(int i=0; i<=length-2; ++i){
+            if(swapFlag==1){//checking out if there are swapings in this round.
+                swapFlag=0;
+                for(int j=0; j<=length-2-i; ++j){
+                    if(order==0){//sort in ascending order
+                        if(data[j]>data[j+1]){
+                            swap(data[j], data[j+1]);
+                            swapFlag=1;
+                        }
+                    }
+                    else{
+                        if(data[j]<data[j+1]){
+                            swap(data[j], data[j+1]);
+                            swapFlag=1;
+                        }
+                    }
+                }
+            }
+            else 
+                return;
+        }
+    }
 };
+
 
 template <typename T>
 T SqList<T>::customDelete() throw(std::string){

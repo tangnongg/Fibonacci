@@ -23,5 +23,11 @@ int main() {
     sqList01.reverse();
     sqList01.printAll();
 
+    sqList01.deleteAllValueX(3);
+    sqList01.printAll();
+
+    sqList01.bubbleSort(0);
+    sqList01.printAll();
+
 }
 
