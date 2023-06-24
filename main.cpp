@@ -17,4 +17,8 @@ int main() {
     SqList<int> sqList05(10,6, 4,4,4,2,5,2);
     sqList05.beingNoSameElement(1);
     sqList05.printAll();
+
+    SqList<double> doubleList(5,5, 1.1,2.2,3.0,4.0,3.0);
+    doubleList.insertAt_pos(3, 9.99);
+    doubleList.printAll();
 }

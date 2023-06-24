@@ -235,8 +235,25 @@ class SqList{
         }
     }
 
+    /*
+    在pos上插入一个元素elem。pos是位序，而非数组下标
+    */
     void insertAt_pos(int pos, T elem){
-        
+        if(pos>=1 || pos<=length+1){
+            if(length+1<size){//like vector' mechanism
+                size+=10;
+                T *temp=new T[size];
+                for(int i=0; i<=length-1; ++i)
+                    temp[i]=data[i];
+                if(data)
+                    delete[] data;
+                data=temp;
+            }
+            for(int i=length-1; i>=pos-1; --i)
+                data[i+1]=data[i];
+            data[pos-1]=elem;
+            ++length;
+        }
     }
 };//SqList
 
