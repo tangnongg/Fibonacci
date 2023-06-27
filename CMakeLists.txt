@@ -16,8 +16,9 @@ target_link_libraries(Main PUBLIC Fibonaccilib
 						   PUBLIC SqListlib)						  
 target_include_directories(Main PUBLIC
 							"${PROJECT_BINARY_DIR}"
-							"${PROJECT_BINARY_DIR}/Fibonacci"
-							"${PROJECT_BINARY_DIR}/SqList")
+							#"${PROJECT_BINARY_DIR}/Fibonacci"
+							#"${PROJECT_BINARY_DIR}/SqList"
+							)
 							
 
 
