@@ -1,4 +1,4 @@
-#include "Header/SqList.h"
+#include "SqList.h"
 #include <sys/types.h>
 #include <iostream>
 

@@ -25,14 +25,16 @@ class SqList{
     }
 
     SqList(int size, int length, ...){
-        this->size=size;
-        data=new T[size];
-        va_list vaList;
-        va_start(vaList, length);
-        for(int i=0; i<length; ++i)
-            data[i]=va_arg(vaList, T);
-        va_end(vaList);
-        this->length=length;
+        if (size >= length) {
+            this->size = size;
+            data = new T[size];
+            va_list vaList;
+            va_start(vaList, length);
+            for (int i = 0; i < length; ++i)
+                data[i] = va_arg(vaList, T);
+            va_end(vaList);
+            this->length = length;
+        }
     }
 
     /*
@@ -240,7 +242,7 @@ class SqList{
     */
     void insertAt_pos(int pos, T elem){
         if(pos>=1 || pos<=length+1){
-            if(length+1<size){//like vector' mechanism
+            if(length+1>size){//like vector' mechanism
                 size+=10;
                 T *temp=new T[size];
                 for(int i=0; i<=length-1; ++i)
