@@ -6,23 +6,14 @@
 #include "SqList/SqList.h"
 
 int main() {
-    Fibonacci fi;
-    fi.fun(4);
-    SqList<int> sqList02(10, 6, 2,5,3,6,4,9);
-    SqList<int> sqList03=sqList02;//execute copy structor
-    sqList03.printAll();
+	SqList<int> list(10,8, 2,4,6,8,10, 3,5,7);
+	//list.reverse(3, 3);
+	//list.printAll();
+	list.swapTwoPart(5, 3);
+	list.printAll();
 
-    SqList<int> sqList04;
-    sqList04=sqList02;//perform copy assignment operator
-    sqList04.printAll();
-
-    SqList<int> sqList05(6,6, 4,4,4,2,5,2); 
-    std::cout << sqList05.getLength() << std::endl;
-    sqList05.beingNoSameElement(1);
-    sqList05.printAll();
-
-    SqList<int> doubleList(6, 6, 4, 4, 4, 2, 5, 2);
-    std::cout << doubleList.getLength() << std::endl;
-    doubleList.insertAt_pos(3, 9);
-    doubleList.printAll();
+	SqList<int> ls(5,5, 5,6,7,8,10);
+	int ret = ls.find_x_and_DoSth(8);
+	std::cout << ret << std::endl;
+	ls.printAll();
 }
