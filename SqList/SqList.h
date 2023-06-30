@@ -91,54 +91,19 @@ class SqList{
     */
     bool swapTwoPart(int m, int n);
 
-    int binarySearch(T x) {
-        if (!isAscending())
-            return -2;
-        int low = 0; int high = length - 1;
-        int mid = (low + high) / 2;
-        while (low < high) {
-            if (data[mid] > x)
-                high = mid - 1;
-            else if (data[mid] < x)
-                low = mid + 1;
-            else
-                return mid;
-            mid = (low + high) / 2;
-        }
-        return -1;//表中无被查元素
-    }
+    /*
+        数组中的每天元素循环左移n个位置，swapTwoPart()是这个函数的一个特例
+    */
+    void cyclicLeftShift(int n);
+
+    /*
+        返回具有值x的元素的数组下标
+    */
+    int binarySearch(T x);
+
+    int find_x_and_DoSth(int x);
 
 
-    int find_x_and_DoSth(int x) {
-        int index=binarySearch(x);
-        if (index == -2)//表非升序表
-            return -2;
-        if (index == -1) {//表中无被查元素
-            if (length + 1 > size) {
-                size += 10;
-                T* temp = new T[size];
-                for (int i = 0; i <= length - 1; ++i)
-                    temp[i] = data[i];
-                if (data)
-                    delete[] data;
-                data=temp;
-            }
-            int insertPos;
-            for (insertPos = 0; insertPos <= length - 1; ++insertPos)
-                if (data[insertPos] > x)
-                    break;
-            for (int i = length - 1; i >= insertPos; --i)
-                data[i + 1] = data[i];
-            data[insertPos] = x;
-            ++length;
-            return 1;
-        }
-        else {//表中有被查元素
-            if (index != length - 1)
-                swap(data[index], data[index + 1]);
-            return 2;
-        }
-    }
 };//SqList
 
 
@@ -402,7 +367,7 @@ inline void SqList<T>::insertAt_pos(int pos, T elem) {
 }
 
 /*
-反转表中第s个元素到第e个元素之间的元素，包括两个端点元素。s,e>0
+    反转表中第s个元素到第e个元素之间的元素，包括两个端点元素。s,e>0，s,n为位序
 */
 template<class T>
 inline void SqList<T>::reverse(int s, int e) {
@@ -419,7 +384,7 @@ inline void SqList<T>::reverse(int s, int e) {
 template<class T>
 inline bool SqList<T>::swapTwoPart(int m, int n) {
     if (m + n != length)
-        return -1;
+        return false;
 #if 0//strategy 1:挪
     for (int i = 0; i <= n - 1; ++i) {
         T temp = data[m + i];
@@ -428,8 +393,8 @@ inline bool SqList<T>::swapTwoPart(int m, int n) {
         }
         data[i] = temp;
     }
-    return 0;
-#elif 1//strategy 2:另一种挪法
+    return true;
+#elif 0//strategy 2:另一种挪法*
     for (int i = 0; i <= n - 1; ++i) {
         T temp = data[length - 1];
         for (int j = 0; j <= length - 1; ++j)
@@ -437,7 +402,7 @@ inline bool SqList<T>::swapTwoPart(int m, int n) {
         data[0] = temp;
     }
     return 0;
-#else//stratrgy 3:先reverse，再swap，最后reverse多出部分
+#elif 0//stratrgy 3:先reverse，再swap，最后reverse多出部分
     reverse(1, m);
     reverse(m + 1, m + n);
     int minLength = std::min<int>(m, n);
@@ -447,6 +412,82 @@ inline bool SqList<T>::swapTwoPart(int m, int n) {
         reverse(n + 1, n + int(std::abs(m - n)));
     else if (m<n)
         reverse(m + 1, m + int(std::abs(m - n)));
-    return 0;
+    return true;
+#elif 0//strategy 4:三个reverse*
+    reverse(1, m);
+    reverse(m + 1, m + n);
+    reverse(1, m);
+    return true;
+#else //strategy 5:辅助数组 auxiliary array
+    T *auxArr = new T[size_t(n + m)];//前面的数组长度为m,后者为n;note: 模板创建不了静态数组，因为要编译器分配，要知道类型的大小。
+    for (int i = 0; i <= n - 1; ++i)
+        auxArr[i] = data[m + i];
+    for (int i = 0; i <= m - 1; ++i)
+        auxArr[n + i] = data[i];
+
+    for (int i = 0; i <= m + n - 1; ++i)
+        data[i] = auxArr[i];
+
+    return true;
 #endif
+}
+
+/*
+数组中的每天元素循环左移n个位置，swapTwoPart()是这个函数的一个特例
+*/
+template<class T>
+inline void SqList<T>::cyclicLeftShift(int n) {
+    reverse(1, n);
+    reverse(n + 1, length);
+    reverse(1, length);
+}
+
+template<class T>
+inline int SqList<T>::binarySearch(T x) {
+    if (!isAscending())
+        return -2;
+    int low = 0; int high = length - 1;
+    int mid = (low + high) / 2;
+    while (low < high) {
+        if (data[mid] > x)
+            high = mid - 1;
+        else if (data[mid] < x)
+            low = mid + 1;
+        else
+            return mid;
+        mid = (low + high) / 2;
+    }
+    return -1;//表中无被查元素
+}
+
+template<class T>
+inline int SqList<T>::find_x_and_DoSth(int x) {
+    int index = binarySearch(x);
+    if (index == -2)//表非升序表
+        return -2;
+    if (index == -1) {//表中无被查元素
+        if (length + 1 > size) {
+            size += 10;
+            T* temp = new T[size];
+            for (int i = 0; i <= length - 1; ++i)
+                temp[i] = data[i];
+            if (data)
+                delete[] data;
+            data = temp;
+        }
+        int insertPos;
+        for (insertPos = 0; insertPos <= length - 1; ++insertPos)
+            if (data[insertPos] > x)
+                break;
+        for (int i = length - 1; i >= insertPos; --i)
+            data[i + 1] = data[i];
+        data[insertPos] = x;
+        ++length;
+        return 1;
+    }
+    else {//表中有被查元素
+        if (index != length - 1)
+            swap(data[index], data[index + 1]);
+        return 2;
+    }
 }

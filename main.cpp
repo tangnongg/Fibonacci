@@ -10,6 +10,7 @@ int main() {
 	//list.reverse(3, 3);
 	//list.printAll();
 	list.swapTwoPart(5, 3);
+	//list.cyclicLeftShift(5);
 	list.printAll();
 
 	SqList<int> ls(5,5, 5,6,7,8,10);
