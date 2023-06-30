@@ -49,8 +49,12 @@ class SqList{
         return size;
     }
 
-    const T* getData() const{
-        return data;
+    const T& getData(int i) const{
+        return data[i];
+    }
+
+    void setData(int i, const T& elem) {
+        data[i] = elem;
     }
 
     /*
@@ -103,7 +107,31 @@ class SqList{
 
     int find_x_and_DoSth(int x);
 
+    /*
+        合并另一个表和当前表到一个新表，返回合并生成的表。
+        strategy=0:将scdList追加到该list的尾部；
+        strategy=1:先分别排成两个升序序列，再合并成一个升序序列。1：两个升序合成一个升序；2：两个序列连接，再升序排序
+    */
+    SqList<T> emergetoNewList(SqList<T> scdList, bool strategy = 0);
 
+    /*
+        将另一个表合并到当前的表。
+    */
+    void emerge(SqList<T> scdList, bool strategy = 0);
+
+    /*
+        求两个序列的中位数，即他们合并之后的升序序列的中位数。
+    */
+    T middleElement(SqList<T> scdList) {
+    
+    }
+
+    /*
+        求序列的主元素。
+    */
+    T mainElement(SqList<T> scdList) {
+
+    }
 };//SqList
 
 
@@ -489,5 +517,100 @@ inline int SqList<T>::find_x_and_DoSth(int x) {
         if (index != length - 1)
             swap(data[index], data[index + 1]);
         return 2;
+    }
+}
+
+
+/*
+strategy=0:将scdList追加到该list的尾部；
+strategy=1:先分别排成两个升序序列，再合并成一个升序序列。1：两个升序合成一个升序；2：两个序列连接，再升序排序
+*/
+template<class T>
+inline SqList<T> SqList<T>::emergetoNewList(SqList<T> scdList, bool strategy) {
+    if (strategy == 0) {
+        SqList<T> retList(length + scdList.getLength(), length + scdList.getLength());
+        for (int i = 0; i <= length - 1; ++i)
+            retList.setData(i, data[i]);
+        for (int i = 0; i <= scdList.getLength() - 1; ++i)
+            retList.setData(length + i, scdList.getData(i));
+        return retList;
+    }
+    else {//strategy = 1
+#if 0 //实现：两个序列连接，再升序排序
+        SqList<T> retList(length + scdList.getLength(), length + scdList.getLength());
+        for (int i = 0; i <= length - 1; ++i)
+            retList.setData(i, data[i]);
+        for (int i = 0; i <= scdList.getLength() - 1; ++i)
+            retList.setData(length + i, scdList.getData(i));
+        retList.bubbleSort(0);
+#else //实现：两个升序合成一个升序
+        if (!isAscending())
+            bubbleSort(0);
+        if (!isAscending())
+            scdList.bubbleSort(0);
+        SqList<T> retList(length + scdList.getLength(), length + scdList.getLength());
+
+        int i_scdL = 0; int i_thisL = 0;//i_scdL for scdList, i_thisL for this list, i_retL for retList
+        for (int i_retL = 0; i_scdL <= scdList.getLength() - 1 && i_thisL <= length - 1; ++i_retL) {
+            if (scdList.getData(i_scdL) <= data[i_thisL]) {
+                retList.setData(i_retL, scdList.getData(i_scdL));
+                ++i_scdL;
+            }
+            else {
+                retList.setData(i_retL, data[i_thisL]);
+                ++i_thisL;
+            }
+        }
+        //note: 没插完的表的“指针”还没有达到表尾的下一元素。
+        //某一个表插完，对应的“指针”已经指定表尾的下一个元素。
+        if (i_scdL <= scdList.getLength()) {//scdList插入完了，this list的后续直接追加到目的retList
+            while (i_thisL <= length) {
+                retList.setData(i_thisL + i_scdL, data[i_thisL]);
+                ++i_thisL;
+            }
+        }
+        if (i_thisL <= length) {////this list插入完了，scdList的后续直接追加到目的retList
+            while (i_scdL <= scdList.getLength()) {
+                retList.setData(i_scdL + i_thisL, scdList.getData(i_scdL));
+                ++i_scdL;
+            }
+        }
+#endif
+        return retList;
+    }
+}
+
+template<class T>
+inline void SqList<T>::emerge(SqList<T> scdList, bool strategy) {
+    if (length + scdList.getLength() > size) {//increase only the size as necessary，not length.
+        size = length + scdList.getLength();
+        T* temp = new T[size];
+        for (int i = 0; i <= length - 1; ++i)
+            temp[i] = data[i];
+        if (data)
+            delete[] data;
+        data = temp;
+    }
+    if (strategy == 0) {//strategy == 0
+        for (int i = 0; i <= scdList.getLength() - 1; ++i) {
+            data[length] = scdList.getData(i);
+            ++length;
+        }
+    }
+    else {//strategy == 1 实现:一个表中的元素逐个插入到另一个表中。
+        for (int i = 0; i <= scdList.getLength() - 1; ++i) {
+            int j;
+            for (j = 0; j <= length - 1; ++j) {
+                if (scdList.getData(i) <= data[j]) {//查到插入位置j(0<=j<=length-1)，需要挪位置
+                    for (int k = length; k >= j + 1; --k) {
+                        data[k] = data[k - 1];
+                    }
+                    break;//已经查到位置，跳出去，不要破坏了正确的j
+                }     
+            }
+            //此时的j就是要插入的位置
+            data[j] = scdList.getData(i);
+            ++length;
+        }
     }
 }
