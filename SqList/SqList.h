@@ -116,21 +116,45 @@ class SqList{
 
     /*
         将另一个表合并到当前的表。
+        strategy=0:将scdList追加到该list的尾部；
+        strategy=1:scdList中的元素逐个有序插入到当前list中。
     */
     void emerge(SqList<T> scdList, bool strategy = 0);
 
     /*
         求两个序列的中位数，即他们合并之后的升序序列的中位数。
+        ret:奇数个元素：返回排中间的元素值; 偶数个元素：返回排中间“偏后”的元素值。
     */
-    T middleElement(SqList<T> scdList) {
-    
+    const T middleElement(SqList<T> scdList) {
+        emerge(scdList, 1);
+        return data[(length + 1) / 2];
     }
 
     /*
-        求序列的主元素。
+        求序列的主元素（值）。
+        要求：序列中的值都属于【0，n）。是否有这样一个元素值val，表中有m个含有val值的元素，其中m>(len/2)，则val就是主元素（值）；否则无。
+        ret:flase for not exsiting, true for exsiting.
     */
-    T mainElement(SqList<T> scdList) {
-
+    bool mainElement(T& mainEle, int n) {
+        int *auxArr=new int[n];
+        for (int i = 0; i <= n - 1; ++i)
+            auxArr[i] = 0;
+        for (int i = 0; i <= length - 1; ++i) { //auxArr[i]里放的是list中元素值等于i的元素的个数。
+            if (0 <= data[i] && data[i] < n) {
+                ++auxArr[data[i]];
+            }
+            else { //简单处理”异常“，并报告错误原因
+                std::cout << "there are elements not satisfying the requirements for the input range." << std::endl;
+                exit(-1);
+            }
+        }
+        for (int i = 0; i <= n - 1; ++i) {
+            if (auxArr[i] > length / 2) {
+                mainEle = i;
+                return true;
+            }
+        }
+        return false;
     }
 };//SqList
 
@@ -523,7 +547,7 @@ inline int SqList<T>::find_x_and_DoSth(int x) {
 
 /*
 strategy=0:将scdList追加到该list的尾部；
-strategy=1:先分别排成两个升序序列，再合并成一个升序序列。1：两个升序合成一个升序；2：两个序列连接，再升序排序
+strategy=1:先分别排成两个升序序列，再合并成一个升序序列。1：两个升序合成一个升序,三个“指针”实现；2：两个序列连接，再升序排序
 */
 template<class T>
 inline SqList<T> SqList<T>::emergetoNewList(SqList<T> scdList, bool strategy) {

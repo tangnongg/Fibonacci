@@ -6,9 +6,8 @@
 #include "SqList/SqList.h"
 
 int main() {
-	SqList<int> list(5,5, 2,4,6,8,10, 3,5,7);
-	SqList<int> list2(4,4, 3, 5, 7,11);
-
-	list.emerge(list2, 1);
-	list.printAll();
+	SqList<int> list(8,3, 0,5,5);
+	SqList<int> list1(8, 5, 3,7,2,3,4);
+	int ret = list.middleElement(list1);
+	std::cout << ret << std::endl;
 }
