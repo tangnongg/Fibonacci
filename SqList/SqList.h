@@ -132,30 +132,29 @@ class SqList{
 
     /*
         求序列的主元素（值）。
-        要求：序列中的值都属于【0，n）。是否有这样一个元素值val，表中有m个含有val值的元素，其中m>(len/2)，则val就是主元素（值）；否则无。
+        要求：序列中的值都属于【0，n）的整数（i.e. T must be int)。
+        问题就是说，列表中是否有这样一个元素值val，表中有m个含有val值的元素，其中m>(len/2)，则val就是主元素（值）；否则无。
         ret:flase for not exsiting, true for exsiting.
     */
-    bool mainElement(T& mainEle, int n) {
-        int *auxArr=new int[n];
-        for (int i = 0; i <= n - 1; ++i)
-            auxArr[i] = 0;
-        for (int i = 0; i <= length - 1; ++i) { //auxArr[i]里放的是list中元素值等于i的元素的个数。
-            if (0 <= data[i] && data[i] < n) {
-                ++auxArr[data[i]];
-            }
-            else { //简单处理”异常“，并报告错误原因
-                std::cout << "there are elements not satisfying the requirements for the input range." << std::endl;
-                exit(-1);
-            }
-        }
-        for (int i = 0; i <= n - 1; ++i) {
-            if (auxArr[i] > length / 2) {
-                mainEle = i;
-                return true;
-            }
-        }
-        return false;
+    bool mainElement(int& mainEle, int n);
+
+    /*
+    * 查找列表中未出现的最小正整数。
+    * 要求：列表中的元素为整数（i.e. T must be int)。
+    * 记录【1，length】范围的整数是否出现在列表中。
+    */
+    int findMinPositiveInteger();
+
+
+    T distance_of_Triples(T a, T b, T c) {
+        return std::abs(a - b) + std::abs(b - c) + std::abs(c - a);
     }
+
+    /*
+    * 多个三元组的距离的最小值（穷举法）。【或者说如何三元组取值以使得三元组的距离最小】
+    */
+    T findMinDistance_of_triples(SqList<T> list2, SqList<T> list3, T(curTriples)[3]);
+
 };//SqList
 
 
@@ -637,4 +636,74 @@ inline void SqList<T>::emerge(SqList<T> scdList, bool strategy) {
             ++length;
         }
     }
+}
+
+/*
+求序列的主元素（值）。
+要求：序列中的值都属于【0，n）的整数（i.e. T must be int)。
+问题就是说，列表中是否有这样一个元素值val，表中有m个含有val值的元素，其中m>(len/2)，则val就是主元素（值）；否则无。
+ret:flase for not exsiting, true for exsiting.
+*/
+template<class T>
+inline bool SqList<T>::mainElement(int& mainEle, int n) {
+    int* auxArr = new int[n];
+    for (int i = 0; i <= n - 1; ++i)
+        auxArr[i] = 0;
+    for (int i = 0; i <= length - 1; ++i) { //auxArr[i]里放的是list中元素值等于i的元素的个数。
+        if (0 <= data[i] && data[i] < n) {
+            ++auxArr[data[i]];
+        }
+        else { //简单处理”异常“，并报告错误原因
+            std::cout << "there are elements not satisfying the requirements for the input range." << std::endl;
+            exit(-1);
+        }
+    }
+    for (int i = 0; i <= n - 1; ++i) {
+        if (auxArr[i] > length / 2) {
+            mainEle = i;
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
+* 查找列表中未出现的最小正整数。
+* 要求：列表中的元素为整数（i.e. T must be int)。
+* 记录【1，length】范围的整数是否出现在列表中。
+*/
+template<class T>
+inline int SqList<T>::findMinPositiveInteger() {
+    bool* auxArr = new bool[length + 1];
+    for (int i = 1; i <= length; ++i)
+        auxArr[i] = 0;
+    for (int i = 0; i <= length - 1; ++i)
+        if (data[i] >= 1 && data[i] <= length)
+            auxArr[data[i]] = 1;
+    for (int i = 1; i <= length; ++i)
+        if (auxArr[i] == 0)
+            return i;
+    return length + 1;
+}
+
+/*
+* 多个三元组的距离的最小值（穷举法）。【或者说如何三元组取值以使得三元组的距离最小】
+*/
+template<class T>
+inline T SqList<T>::findMinDistance_of_triples(SqList<T> list2, SqList<T> list3, T(curTriples)[3]) {
+    T minDis = 9999;//assuming that the maximum would not be bigger than 9999;
+    for (int i = 0; i <= length - 1; ++i) {
+        for (int j = 0; j <= list2.getLength() - 1; ++j) {
+            for (int k = 0; k <= list3.getLength() - 1; ++k) {
+                T curDis = distance_of_Triples(data[i], list2.getData(j), list3.getData(k));
+                if (minDis > curDis) {
+                    minDis = curDis;
+                    curTriples[0] = data[i];
+                    curTriples[1] = list2.getData(j);
+                    curTriples[2] = list3.getData(k);
+                }
+            }
+        }
+    }
+    return minDis;
 }
