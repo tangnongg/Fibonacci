@@ -9,7 +9,7 @@
 
 int main() {
 	SLList<int> list(6, 4,2,4,3,9,4);
+	list.insertSort(1);
 	list.printAll();
-	list.deleteAllValue_x(4);
-	list.printAll();
+
 }
