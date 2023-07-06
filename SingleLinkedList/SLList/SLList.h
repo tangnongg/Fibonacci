@@ -49,6 +49,24 @@ public:
 
 	void SLList<T>::printAll();
 
+	const T& getData(int pos) {
+		Node<T>* p = head;
+		for (int i = 0; i <= pos - 1; ++i) {
+			if (!p) {
+				std::cout << "acessing out of range!" << std::endl;
+				exit(-1);
+			}
+			p = p->next;
+		}
+		if (!p) {
+			std::cout << "acessing out of range!" << std::endl;
+			exit(-1);
+		}
+		else {
+			return p->data;
+		}
+	}
+
 	void deleteAllValue_x(T x);
 
 	void printAllReversely();

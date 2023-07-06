@@ -7,9 +7,10 @@
 
 #include "SingleLinkedList/SLList/SLList.h"
 
-int main() {
-	SLList<int> list(6, 4,2,4,3,9,4);
-	list.insertSort(1);
-	list.printAll();
-
-}
+/*²âÊÔ×÷ÓÃ*/
+//int main() {
+//	SLList<int> list(6, 4,2,4,3,9,4);
+//	list.insertSort(1);
+//	list.printAll();
+//
+//}
