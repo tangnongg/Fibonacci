@@ -4,10 +4,6 @@ add_executable(testSLList testSLList.cpp)
 target_link_libraries(testSLList SLListlib Catchlib)
 
 
-
-
-
-
 #[[
 # enable testing functionality
 enable_testing()

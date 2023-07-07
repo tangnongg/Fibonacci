@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdarg>
 #include <stack>
+#include <vector>
+#include <iostream>
 
 //类前声明
 template <class T> class SLList_without_HN;
@@ -23,6 +25,15 @@ public:
 	Node(const T& data, Node<T>* next) :
 		data(data), next(next) 
 	{}
+
+	const T& getData() {
+		return data;
+	}
+	//note:const Node<T>*& getNext() 
+	//would lead to the problem:the pointer of const type* cant initialize the pointer of type*
+	Node<T>*& getNext() {
+		return next;
+	}
 };
 
 /*************************
@@ -47,25 +58,19 @@ public:
 
 	SLList(int length, ...);
 
+	const int& getLength() {
+		return length;
+	}
+
+	Node<T>*& getHead() {
+		return head;
+	}
+
+	void printAll_to_Vector(std::vector<T>& vec);
+
 	void SLList<T>::printAll();
 
-	const T& getData(int pos) {
-		Node<T>* p = head;
-		for (int i = 0; i <= pos - 1; ++i) {
-			if (!p) {
-				std::cout << "acessing out of range!" << std::endl;
-				exit(-1);
-			}
-			p = p->next;
-		}
-		if (!p) {
-			std::cout << "acessing out of range!" << std::endl;
-			exit(-1);
-		}
-		else {
-			return p->data;
-		}
-	}
+	const T& getData(int pos);
 
 	void deleteAllValue_x(T x);
 
@@ -84,8 +89,11 @@ public:
 	/*
 	* 原地排序，带头结点。
 	* 参照原地逆置的实现，看作有序表和待排表，直接插入排序
+	* order=0 for sorting in ascending order
 	*/
 	void insertSort(bool order = 0);
+
+
 };
 
 
@@ -232,6 +240,21 @@ inline SLList<T>::SLList(int length, ...) {
 }
 
 template<class T>
+inline void SLList<T>::printAll_to_Vector(std::vector<T>& vec) {
+	//Node<T>* p = head;
+	//while (p) {
+	//	p = p->next;
+	//	if(p)//访问野指针，空指针会发生异常 access vialation
+	//		vec.push_back(p->data);
+	//}
+	Node<T>* p = head->next;
+	while (p) {
+		vec.push_back(p->data);
+		p = p->next;
+	}
+}
+
+template<class T>
 inline void SLList<T>::printAll()
 {
 	Node<T>* p = head->next;
@@ -243,6 +266,26 @@ inline void SLList<T>::printAll()
 		}
 		std::cout << p->data << ",";
 		p = p->next;
+	}
+}
+
+template<class T>
+inline const T& SLList<T>::getData(int pos) {
+	//如果有成员length，直接把pos与length做比较
+	Node<T>* p = head;
+	for (int i = 0; i <= pos - 1; ++i) {
+		if (!p) {
+			std::cout << "acessing out of range!" << std::endl;
+			exit(-1);
+		}
+		p = p->next;
+	}
+	if (!p) {
+		std::cout << "acessing out of range!" << std::endl;
+		exit(-1);
+	}
+	else {
+		return p->data;
 	}
 }
 
