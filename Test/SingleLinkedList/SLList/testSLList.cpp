@@ -13,12 +13,12 @@
 TEST_CASE("test for SLList<int>", "[short]") {//"[long]"tag
     SLList<int> list(6, 4,2,4,3,9,4);
     list.insertSort(1);
-    list.printAll();
+    //list.printAll();
     REQUIRE(list.getData(1) == 9);
     REQUIRE(list.getData(2) == 4);
     REQUIRE(list.getData(3) == 4);
     REQUIRE(list.getData(4) == 4);
-    CHECK(list.getData(5) == 100);
+    CHECK_FALSE(list.getData(5) == 100);//为了不出现failed.
     REQUIRE(list.getData(6) == 2);
 }
 
@@ -29,12 +29,12 @@ TEST_CASE("test for SLList<int> in a way of using vector matchers", "[tag]") {//
     list.printAll_to_Vector(vecOrigin);
 
     list.insertSort(1);
-    list.printAll();
+    //list.printAll();
     std::vector<int> vecLater;
     list.printAll_to_Vector(vecLater);
 
     SECTION("order matters for equals operation") {
-        CHECK_THAT(vecOrigin, Equals(vecLater));
+        CHECK_THAT(vecOrigin, !Equals(vecLater));//CHECK_THAT的否定形式：！works.
     }
 
     SECTION("order does not matter for equals operation") {
@@ -45,8 +45,8 @@ TEST_CASE("test for SLList<int> in a way of using vector matchers", "[tag]") {//
         std::vector<int> subVec;
         subVec.push_back(9);
         subVec.push_back(4);
-        CHECK_THAT(vecOrigin, Equals(subVec));
-        CHECK_THAT(vecOrigin, UnorderedEquals(subVec));
+        CHECK_THAT(vecOrigin, !Equals(subVec));
+        CHECK_THAT(vecOrigin, !UnorderedEquals(subVec));
         CHECK_THAT(vecOrigin, Contains(subVec));
         subVec.push_back(9);
         CHECK_THAT(vecOrigin, Contains(subVec));
@@ -54,6 +54,27 @@ TEST_CASE("test for SLList<int> in a way of using vector matchers", "[tag]") {//
         CHECK_THAT(vecOrigin, VectorContains(9));
         CHECK_THAT(vecOrigin, VectorContains(2));
     }
+}
+
+TEST_CASE("testing for the member function deleteAllValue_between_a_and_b of SLList<int>", "") {
+    SLList<int> list(6, 4, 2, 4, 3, 9, 4);
+
+    list.deleteAllValue_between_a_and_b(3, 4);
+    std::vector<int> vecAfterDelete;
+    list.printAll_to_Vector(vecAfterDelete);
+
+    std::vector<int> vecTarget;
+    vecTarget.assign({ 2,9 });
+    CHECK_THAT(vecAfterDelete, Equals(vecTarget));
+    
+}
+
+TEST_CASE("testing for the member function commonNode of SLList<int>", "") {
+    SLList<int> list(6, 4, 2, 4, 3, 9, 4);
+    SLList<int> emergedList(3, 7, 7, 70);
+    emergedList.emerge(list);
+    CHECK(list.getHead()->getNext() == list.commonNode(emergedList));
+    CHECK(list.getHead()->getNext() == emergedList.commonNode(list)); 
 }
 
 

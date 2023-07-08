@@ -26,6 +26,15 @@ public:
 		data(data), next(next) 
 	{}
 
+	/*
+	* 会造成连环析构，而非仅仅析构这一个结点（如果这个结点的next不为null），
+	* 就是要普通的析构函数，只释放当前结点的内存，不去管当前结点中next连接的内存。
+	*/
+	//~Node() {
+	//	if (next)
+	//		delete next;
+	//}
+
 	const T& getData() {
 		return data;
 	}
@@ -57,6 +66,16 @@ public:
 	{}
 
 	SLList(int length, ...);
+
+	~SLList() {
+		Node<T>* p = head;
+		if (p) {
+			Node<T>* temp = p;
+			p = p->next;
+			if(temp)
+				delete temp;
+		}
+	}
 
 	const int& getLength() {
 		return length;
@@ -93,7 +112,11 @@ public:
 	*/
 	void insertSort(bool order = 0);
 
+	void deleteAllValue_between_a_and_b(const T& a, const T& b);
 
+	Node<T>* commonNode(SLList<T>& list);
+
+	void emerge(SLList<T>& list);
 };
 
 
@@ -111,6 +134,16 @@ public:
 	{}
 
 	SLList_without_HN(int length, ...);
+
+	~SLList_without_HN() {		
+		Node<T>* p = head;
+		if (p) {
+			Node<T>* temp = p;
+			p = p->next;
+			if (temp)
+				delete temp;
+		}
+	}
 
 	void printAll();
 
@@ -223,6 +256,7 @@ inline void SLList_without_HN<T>::deleteAllValue_x_Recursive(Node<T>*& head, T x
 ***************************/
 template<class T>
 inline SLList<T>::SLList(int length, ...) {
+	this->length = length;
 	va_list vaList;
 	va_start(vaList, length);
 
@@ -233,9 +267,7 @@ inline SLList<T>::SLList(int length, ...) {
 		Node<T>* newNode = new Node<T>(va_arg(vaList, T), nullptr);
 		rear->next = newNode;
 		rear = newNode;
-		++this->length;
 	}
-
 	va_end(vaList);
 }
 
@@ -348,6 +380,7 @@ inline void SLList<T>::deleteMin() {
 	minPre->next = min->next;
 	if (min)
 		delete min;
+	--length;
 }
 
 /*
@@ -400,6 +433,58 @@ inline void SLList<T>::insertSort(bool order) {
 
 		p = laterLs;
 	}
+}
+
+template<class T>
+inline void SLList<T>::deleteAllValue_between_a_and_b(const T& a, const T& b) {
+	if (a > b)
+		return;
+	Node<T>* pre = head;
+	Node<T>* p = head->next;
+	while (p) {
+		if (p->data >= a && p->data <= b) {
+			pre->next = p->next;
+			Node<T>* temp = p;
+			p = p->next;
+			if (temp)
+				delete temp;
+			--length;
+		}
+		else {
+			pre = pre->next;
+			p = p->next;
+		}
+	}
+}
+
+template<class T>
+inline Node<T>* SLList<T>::commonNode(SLList<T>& list) {
+	int diff = std::abs(length - list.getLength());
+	Node<T>* p = head;
+	Node<T>* listP = list.getHead();
+	for (int i = 0; i <= diff - 1; ++i) {
+		p = p->next;
+	}
+	while (p) {
+		if (p == listP) {
+			return p;
+		}
+		else {
+			p = p->next;
+			listP = listP->next;
+		}
+	}
+	//return nullptr;
+}
+
+template<class T>
+inline void SLList<T>::emerge(SLList<T>& list) {
+	Node<T>* p = head;
+	while (p->next) {//get the pointer to the rear node.
+		p = p->next;
+	}
+	p->next = list.getHead()->getNext();//list的头结点的析构由list负责
+	length += list.getLength();
 }
 
 
