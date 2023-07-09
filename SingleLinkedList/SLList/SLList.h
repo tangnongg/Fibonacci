@@ -118,13 +118,47 @@ public:
 
 	/*
 	* 分解成两个表。原来表留下序号为奇数的结点，返回的表放序号为偶数的结点，保存元素相对顺序不变。
-	* 把偶数序号的结点摘出，追加（尾插）到返回表。
+	* divide {a1,b1,a2,b2,...,an,bn} into {a1,a2,...,an} and {b1,b2,...,bn}
+	* 思路：把偶数序号的结点摘出，追加（尾插）到返回表。
 	* 方法1:提前准备好下一轮的”工作指针组“放到“备份组”，该轮的结束，取用“备份组”。
 	* 方法2：count计数当前结点的序号。
 	*/
 	void divide_into_Two(SLList<T>& retList);
 
+	/*
+	* divide {a1,b1,a2,b2,...,an,bn} into {a1,a2,...,an} and {bn,...b2,b1}
+	* 思路：把偶数序号的结点摘出，前置（头插）到返回表。
+	* note:         temp------>data|next
+	*                              ^
+	*							   |
+	*                              p
+	*       Because they are the same piece of space, temp->next varies along with p->next. 
+	*/
+	void divide_into_Two_2(SLList<T>& retList) {
+#if 0
+		divide_into_Two(retList);
+		retList.reverse();
+#else
+		int count = 1;
+		Node<T>* p = head->next;
+		Node<T>* pre = head;
+		while (p) {
+			if (count % 2 == 0) {
+				pre->next = p->next;
 
+				p->next = retList.getHead()->getNext();
+				retList.getHead()->getNext() = p;
+
+				p = pre->next;
+			}
+			else {
+				pre = pre->next;
+				p = p->next;
+			}			
+			++count;
+		}
+#endif
+	}
 };
 
 

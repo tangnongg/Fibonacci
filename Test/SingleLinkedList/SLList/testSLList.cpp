@@ -104,6 +104,26 @@ TEST_CASE("testing for the member function divide_into_Two of SLList<int>", "") 
     CHECK_THAT(dividedVec, Equals(devidedVecTarget));
 }
 
+TEST_CASE("testing for the member function divide_into_Two_2 of SLList<int>", "") {
+    SLList<int> list(6, 1, 2, 3, 4, 5, 6);
+    SLList<int> retL;
+    list.divide_into_Two_2(retL);
+
+    std::vector<int> retVec;
+    retL.printAll_to_Vector(retVec);
+    std::vector<int> dividedVec;
+    list.printAll_to_Vector(dividedVec);
+
+    std::vector<int> retVecTarget;
+    retVecTarget.assign({ 6,4,2 });
+    std::vector<int> devidedVecTarget;
+    devidedVecTarget.assign({ 1,3,5 });
+
+    CHECK_THAT(retVec, Equals(retVecTarget));
+    CHECK_THAT(dividedVec, Equals(devidedVecTarget));
+}
+
+
 /*type parametrized test cases*/
 /*
 TEMPLATE_TEST_CASE("test for SLList<int> and SLList<double>", "[long]", int, double) {
