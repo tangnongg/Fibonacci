@@ -9,9 +9,14 @@
 
 
 int main() {
-	SLList<int> list(6, 4,2,4,3,9,4);
-	list.insertSort(1);
-	list.printAll();
+
+	int* pa = new int(1);
+	int* pb = pa;
+	pa = nullptr;
+	if (pb == nullptr)
+		std::cout << "yes";
+	else
+		std::cout << "no";
 
 }
 

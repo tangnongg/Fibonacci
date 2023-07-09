@@ -19,7 +19,7 @@ private:
 
 public:
 	Node() :
-	next(nullptr)
+	data(), next(nullptr)
 	{}
 
 	Node(const T& data, Node<T>* next) :
@@ -62,20 +62,12 @@ private:
 
 public:
 	SLList() :
-		head(nullptr), length(0)
+		length(0), head(new Node<T>)
 	{}
 
 	SLList(int length, ...);
 
-	~SLList() {
-		Node<T>* p = head;
-		if (p) {
-			Node<T>* temp = p;
-			p = p->next;
-			if(temp)
-				delete temp;
-		}
-	}
+	~SLList();
 
 	const int& getLength() {
 		return length;
@@ -117,6 +109,22 @@ public:
 	Node<T>* commonNode(SLList<T>& list);
 
 	void emerge(SLList<T>& list);
+
+	/*
+	* 递增输出链表元素，并释放结点，不使用辅助空间的做法。
+	* 先升序排列，后从首结点遍历输出结点的元素值，同时释放当前结点。
+	*/
+	void print_and_Realease();
+
+	/*
+	* 分解成两个表。原来表留下序号为奇数的结点，返回的表放序号为偶数的结点，保存元素相对顺序不变。
+	* 把偶数序号的结点摘出，追加（尾插）到返回表。
+	* 方法1:提前准备好下一轮的”工作指针组“放到“备份组”，该轮的结束，取用“备份组”。
+	* 方法2：count计数当前结点的序号。
+	*/
+	void divide_into_Two(SLList<T>& retList);
+
+
 };
 
 
@@ -135,15 +143,7 @@ public:
 
 	SLList_without_HN(int length, ...);
 
-	~SLList_without_HN() {		
-		Node<T>* p = head;
-		if (p) {
-			Node<T>* temp = p;
-			p = p->next;
-			if (temp)
-				delete temp;
-		}
-	}
+	~SLList_without_HN();
 
 	void printAll();
 
@@ -154,7 +154,6 @@ public:
 	}
 
 	void deleteAllValue_x_Recursive(Node<T>*& head, T x);
-
 
 };
 
@@ -183,6 +182,17 @@ inline SLList_without_HN<T>::SLList_without_HN(int length, ...) :
 	}
 
 	va_end(vaList);
+}
+
+template<class T>
+inline SLList_without_HN<T>::~SLList_without_HN() {
+	Node<T>* p = head;
+	if (p) {
+		Node<T>* temp = p;
+		p = p->next;
+		if (temp)
+			delete temp;
+	}
 }
 
 template<class T>
@@ -269,6 +279,17 @@ inline SLList<T>::SLList(int length, ...) {
 		rear = newNode;
 	}
 	va_end(vaList);
+}
+
+template<class T>
+inline SLList<T>::~SLList() {
+	Node<T>* p = head;
+	if (p) {
+		Node<T>* temp = p;
+		p = p->next;
+		if (temp)
+			delete temp;
+	}
 }
 
 template<class T>
@@ -405,11 +426,12 @@ inline void SLList<T>::reverse() {
 */
 template<class T>
 inline void SLList<T>::insertSort(bool order) {
-	Node<T>* p = head->next;//这个工作指针遍历后表laterLs
+	Node<T>* p = head->next;//这个工作指针遍历后表unorderedList
 	head->next = nullptr;//前表head,尾部断链结尾
-	Node<T>* laterLs = nullptr;//后表laterLs
+	Node<T>* unorderedList = nullptr;//后表unorderedList
+
 	while (p) {
-		laterLs = p->next;
+		unorderedList = p->next;
 
 		//寻找工作结点在有序表中"插入位置"。插在该元素之前，需要前驱。
 		Node<T>* insertPosPre = head;
@@ -428,10 +450,11 @@ inline void SLList<T>::insertSort(bool order) {
 			insertPosPre = insertPosPre->next;
 			insertPos = insertPos->next;
 		}
+
 		p->next = insertPosPre->next;
 		insertPosPre->next = p;
 
-		p = laterLs;
+		p = unorderedList;
 	}
 }
 
@@ -485,6 +508,68 @@ inline void SLList<T>::emerge(SLList<T>& list) {
 	}
 	p->next = list.getHead()->getNext();//list的头结点的析构由list负责
 	length += list.getLength();
+}
+
+/*
+* 递增输出链表元素，并释放结点，不使用辅助空间的做法。
+* 先升序排列，后从首结点遍历输出结点的元素值，同时释放当前结点。
+*/
+template<class T>
+inline void SLList<T>::print_and_Realease() {
+	insertSort(0);
+	Node<T>* p = head->next;
+	head->next = nullptr;//if not to do this, it will become a wild pointer(its space is freed but it is not nullptr).
+	while (p) {
+		if (p->next == nullptr) {
+			std::cout << p->data << std::endl;
+			if (p)
+				delete p;
+			--length;
+			return;
+		}
+		std::cout << p->data << ",";
+		Node<T>* temp = p;
+		p = p->next;
+		if (temp)
+			delete temp;
+		--length;
+	}
+}
+
+/*
+* 分解成两个表。原来表留下序号为奇数的结点，返回的表放序号为偶数的结点，保存元素相对顺序不变。
+* 把偶数序号的结点摘出，追加（尾插）到返回表。
+*/
+template<class T>
+inline void SLList<T>::divide_into_Two(SLList<T>& retList) {
+	Node<T>* rear = retList.getHead();
+	Node<T>* pre = head->next;
+	Node<T>* p = nullptr;
+	if (pre)
+		p = pre->next;
+	else
+		return;
+	static Node<T>* nextPre = nullptr;
+	Node<T>* nextP = nullptr;
+	//以上是初始状态的选取
+	while (p) {
+		//准备下轮，备份
+		nextP = p->next;
+		nextPre = pre->next;
+		if (nextP) {
+			nextP = nextP->next;
+			nextPre = nextPre->next;
+		}
+		//摘取
+		pre->next = p->next;
+		//尾插追加
+		p->next = nullptr;
+		rear->next = p;
+		rear = p;
+		//取用备份
+		pre = nextPre;
+		p = nextP;
+	}
 }
 
 

@@ -65,8 +65,7 @@ TEST_CASE("testing for the member function deleteAllValue_between_a_and_b of SLL
 
     std::vector<int> vecTarget;
     vecTarget.assign({ 2,9 });
-    CHECK_THAT(vecAfterDelete, Equals(vecTarget));
-    
+    CHECK_THAT(vecAfterDelete, Equals(vecTarget)); 
 }
 
 TEST_CASE("testing for the member function commonNode of SLList<int>", "") {
@@ -77,6 +76,33 @@ TEST_CASE("testing for the member function commonNode of SLList<int>", "") {
     CHECK(list.getHead()->getNext() == emergedList.commonNode(list)); 
 }
 
+TEST_CASE("testing for the member function print_and_Realease of SLList<int>", "") {
+    SLList<int> list(6, 4, 2, 4, 3, 9, 4);
+    list.print_and_Realease();
+    CHECK(list.getLength() == 0);
+    //delete释放了指针所指的空间，不会随后把该指针指向nullptr，指向不变
+    //CHECK(list.getHead()->getNext() == nullptr);
+    //list.printAll();
+}
+
+TEST_CASE("testing for the member function divide_into_Two of SLList<int>", "") {
+    SLList<int> list(6, 1,2,3,4,5,6);
+    SLList<int> retL;
+    list.divide_into_Two(retL);
+
+    std::vector<int> retVec;
+    retL.printAll_to_Vector(retVec);
+    std::vector<int> dividedVec;
+    list.printAll_to_Vector(dividedVec);
+
+    std::vector<int> retVecTarget;
+    retVecTarget.assign({ 2,4,6 });
+    std::vector<int> devidedVecTarget;
+    devidedVecTarget.assign({ 1,3,5 });
+
+    CHECK_THAT(retVec, Equals(retVecTarget));
+    CHECK_THAT(dividedVec, Equals(devidedVecTarget));
+}
 
 /*type parametrized test cases*/
 /*
