@@ -123,6 +123,46 @@ TEST_CASE("testing for the member function divide_into_Two_2 of SLList<int>", ""
     CHECK_THAT(dividedVec, Equals(devidedVecTarget));
 }
 
+TEST_CASE("testing for the member function beingNoSameElement of SLList<int>", "") {
+    SLList<int> list(6, 1, 2, 2, 4, 4, 4);
+    list.beingNoSameElement();
+    std::vector<int> listVecAfterOp;
+    list.printAll_to_Vector(listVecAfterOp);
+
+    std::vector<int> targetVec;
+    targetVec.assign({ 1, 2, 4 });
+
+    CHECK_THAT(listVecAfterOp, Equals(targetVec));
+}
+
+TEST_CASE("testing for the member function emergetoNewList of SLList<int>", "") {
+    SLList<int> list(6, 1, 2, 3, 4, 5, 6);
+    SLList<int> list2(3, 2, 3, 7);
+    list.emergetoNewList(list2);
+    
+    std::vector<int> listVecAfterOp;
+    list.printAll_to_Vector(listVecAfterOp);
+    std::vector<int> targetVec;
+    targetVec.assign({ 7,6,5,4,3,3,2,2,1 });
+
+    CHECK_THAT(listVecAfterOp, Equals(targetVec));
+}
+
+TEST_CASE("testing for the member function generateCommonVlaueList of SLList<int>", "") {
+    SLList<int> list(6, 1, 2, 3, 4, 5, 6);
+    SLList<int> list2(3, 2,3,7);
+    SLList<int> generatedList;
+    list.generateCommonVlaueList(list2, generatedList);
+
+    std::vector<int> generatedVec;
+    generatedList.printAll_to_Vector(generatedVec);
+    std::vector<int> targetVec;
+    targetVec.assign({ 2, 3 });
+
+    CHECK_THAT(generatedVec, Equals(targetVec));
+}
+
+
 
 /*type parametrized test cases*/
 /*

@@ -117,7 +117,7 @@ public:
 	void print_and_Realease();
 
 	/*
-	* 分解成两个表。原来表留下序号为奇数的结点，返回的表放序号为偶数的结点，保存元素相对顺序不变。
+	* 分解成两个表。原来表留下序号为奇数的结点，返回的表retList放序号为偶数的结点，保存元素相对顺序不变。
 	* divide {a1,b1,a2,b2,...,an,bn} into {a1,a2,...,an} and {b1,b2,...,bn}
 	* 思路：把偶数序号的结点摘出，追加（尾插）到返回表。
 	* 方法1:提前准备好下一轮的”工作指针组“放到“备份组”，该轮的结束，取用“备份组”。
@@ -134,31 +134,25 @@ public:
 	*                              p
 	*       Because they are the same piece of space, temp->next varies along with p->next. 
 	*/
-	void divide_into_Two_2(SLList<T>& retList) {
-#if 0
-		divide_into_Two(retList);
-		retList.reverse();
-#else
-		int count = 1;
-		Node<T>* p = head->next;
-		Node<T>* pre = head;
-		while (p) {
-			if (count % 2 == 0) {
-				pre->next = p->next;
+	void divide_into_Two_2(SLList<T>& retList);
 
-				p->next = retList.getHead()->getNext();
-				retList.getHead()->getNext() = p;
+	/*
+	* "递增有序的"单链表，去除数值相同的元素，使表中不再有重复的元素。
+	*/
+	void beingNoSameElement();
 
-				p = pre->next;
-			}
-			else {
-				pre = pre->next;
-				p = p->next;
-			}			
-			++count;
-		}
-#endif
-	}
+	/*
+	* 两个递增的单链表合并成一个递减的单链表。
+	* 要求：利用原来的结点作为合并后的链表的结点。
+	* 方法：两个工作指针分别指向两个表的首结点，比较他们当前所指的两个结点的元素值，
+	* （原来升序，生成降序+用头插法）-->取Min，举例模拟，快速确定。
+	*/
+	void emergetoNewList(SLList<T>& list);
+
+	/*
+	* 生成一个新的具有两个递增链表（元素值唯一）的公共元素值的链表
+	*/
+	void generateCommonVlaueList(SLList<T>& list, SLList<T>& generatedList);
 };
 
 
@@ -571,7 +565,7 @@ inline void SLList<T>::print_and_Realease() {
 }
 
 /*
-* 分解成两个表。原来表留下序号为奇数的结点，返回的表放序号为偶数的结点，保存元素相对顺序不变。
+* 分解成两个表。原来表留下序号为奇数的结点，返回的表retList放序号为偶数的结点，保存元素相对顺序不变。
 * 把偶数序号的结点摘出，追加（尾插）到返回表。
 */
 template<class T>
@@ -603,6 +597,156 @@ inline void SLList<T>::divide_into_Two(SLList<T>& retList) {
 		//取用备份
 		pre = nextPre;
 		p = nextP;
+	}
+}
+
+/*
+* divide {a1,b1,a2,b2,...,an,bn} into {a1,a2,...,an} and {bn,...b2,b1}
+* 思路：把偶数序号的结点摘出，前置（头插）到返回表。
+* note:         temp------>data|next
+*                              ^
+*							   |
+*                              p
+*       Because they are the same piece of space, temp->next varies along with p->next.
+*/
+template<class T>
+inline void SLList<T>::divide_into_Two_2(SLList<T>& retList) {
+#if 0
+	divide_into_Two(retList);
+	retList.reverse();
+#else
+	int count = 1;
+	Node<T>* p = head->next;
+	Node<T>* pre = head;
+	while (p) {
+		if (count % 2 == 0) {
+			pre->next = p->next;
+
+			p->next = retList.getHead()->getNext();
+			retList.getHead()->getNext() = p;
+
+			p = pre->next;
+		}
+		else {
+			pre = pre->next;
+			p = p->next;
+		}
+		++count;
+	}
+#endif
+}
+
+/*
+* "递增有序的"单链表，去除数值相同的元素，使表中不再有重复的元素。
+*/
+template<class T>
+inline void SLList<T>::beingNoSameElement() {
+	Node<T>* pre = head->next;
+	Node<T>* p = nullptr;
+	if (pre)
+		p = pre->next;
+	else
+		return;
+	Node<T>* stagedPNext = nullptr;
+	Node<T>* stagedPreNext = nullptr;
+	while (p) {
+		if (p->data == pre->data) {
+			p = p->next;//末尾几个相等的情况
+		}
+		else {
+			stagedPNext = p->next;
+			stagedPreNext = pre->next;
+
+			pre->next = p;
+			pre = p;
+			p = p->next;
+
+			stagedPreNext = nullptr;
+			while (stagedPreNext) {
+				delete stagedPreNext;
+				stagedPreNext = stagedPreNext->next;
+			}
+		}
+	}
+	//in case 末尾几个相等的情况
+	p = pre->next;
+	pre->next = nullptr;
+	while (p) {
+		Node<T>* temp = p;
+		p = p->next;
+		delete temp;
+	}
+}
+
+/*
+* 两个递增的单链表合并成一个递减的单链表。
+* 要求：利用原来的结点作为合并后的链表的结点。
+* 方法：两个工作指针分别指向两个表的首结点，比较他们当前所指的两个结点的元素值，
+* （原来升序，生成降序+用头插法）-->取Min，举例模拟，快速确定。
+*/
+template<class T>
+inline void SLList<T>::emergetoNewList(SLList<T>& list) {
+	Node<T>* p = head->next;
+	Node<T>* listP = list.getHead()->getNext();
+	head->next = nullptr;
+	Node<T>* min = nullptr;
+	while (p && listP)
+	{
+		if (p->data >= listP->data) {
+			min = listP;
+			listP = listP->next;
+		}
+		else {
+			min = p;
+			p = p->next;
+		}
+		min->next = head->next;
+		head->next = min;
+	}
+	Node<T>* temp = nullptr;
+	if (!p) {
+		while (listP) {
+			temp = listP->next;//note: 目的就是listP->next,直接copy它而不是listP，防止后面被改了。
+			listP->next = head->next;//防止后面被改了，后面所指此处
+			head->next = listP;
+			listP = temp;
+		}
+	}
+	else {
+		while (p) {
+			temp = p->next;
+			p->next = head->next;
+			head->next = p;
+			p = temp;
+		}
+	}
+}
+
+/*
+* 生成一个新的具有两个递增链表（元素值唯一）的公共元素值的链表
+*/
+template<class T>
+inline void SLList<T>::generateCommonVlaueList(SLList<T>& list, SLList<T>& generatedList) {
+	Node<T>* p = head->next;
+	Node<T>* listP = list.getHead()->getNext();
+	Node<T>* rear = generatedList.getHead();
+	while (p) {
+		while (listP) {
+			if (listP->data == p->data) {
+				Node<T>* newNode = new Node<T>(listP->data, nullptr);
+				rear->getNext() = newNode;
+				rear = newNode;
+				break;
+			}
+			else if (listP->data < p->data)
+			{
+				listP = listP->next;
+			}
+			else {
+				break;
+			}
+		}
+		p = p->next;
 	}
 }
 
