@@ -162,6 +162,26 @@ TEST_CASE("testing for the member function generateCommonVlaueList of SLList<int
     CHECK_THAT(generatedVec, Equals(targetVec));
 }
 
+TEST_CASE("testing for the member function generateCommonVlaueList overload of SLList<int>", "") {
+    SLList<int> list(6, 1, 2, 3, 4, 5, 6);
+    SLList<int> list2(3, 2, 3, 7);
+    list.generateCommonVlaueList(list2);
+
+    std::vector<int> listVecAfterOp;
+    list.printAll_to_Vector(listVecAfterOp);
+    std::vector<int> targetVec;
+    targetVec.assign({ 3, 2 });
+
+    CHECK_THAT(listVecAfterOp, Equals(targetVec));
+    CHECK(listVecAfterOp.size()==targetVec.size());
+}
+
+TEST_CASE("testing for the member function modeMatch of SLList<int>", "") {
+    SLList<char> list(6, 'a', 'a', 'd', 'b', 'c', 'a');
+    SLList<char> modeList(2, 'b', 'c');
+    
+    CHECK(list.modeMatch(modeList)==true);
+}
 
 
 /*type parametrized test cases*/

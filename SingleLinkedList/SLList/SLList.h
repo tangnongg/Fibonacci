@@ -73,6 +73,10 @@ public:
 		return length;
 	}
 
+	void setLength(int len) {
+		length = len;
+	}
+
 	Node<T>*& getHead() {
 		return head;
 	}
@@ -150,9 +154,22 @@ public:
 	void emergetoNewList(SLList<T>& list);
 
 	/*
-	* 生成一个新的具有两个递增链表（元素值唯一）的公共元素值的链表
+	* 生成一个新的具有两个递增链表（元素值唯一）的公共元素值的链表, 不破坏原来的链表。
+	* 结果保存在generatedList
 	*/
 	void generateCommonVlaueList(SLList<T>& list, SLList<T>& generatedList);
+
+	/*
+	* 生成一个新的具有两个递增链表（元素值唯一）的公共元素值的链表, 利用原来的链表的结点。
+	* 结果保存在当前链表。
+	*/
+	void generateCommonVlaueList(SLList<T>& list);
+
+	/*
+	* 是否存在子序列，i.e. mode match.
+	* 循环穷举
+	*/
+	bool modeMatch(SLList<T>& modeList);
 };
 
 
@@ -594,6 +611,8 @@ inline void SLList<T>::divide_into_Two(SLList<T>& retList) {
 		p->next = nullptr;
 		rear->next = p;
 		rear = p;
+		--length;
+		retList.setLength(retList.getLength() + 1);
 		//取用备份
 		pre = nextPre;
 		p = nextP;
@@ -626,6 +645,9 @@ inline void SLList<T>::divide_into_Two_2(SLList<T>& retList) {
 			retList.getHead()->getNext() = p;
 
 			p = pre->next;
+
+			--length;
+			retList.setLength(retList.getLength() + 1);
 		}
 		else {
 			pre = pre->next;
@@ -664,6 +686,7 @@ inline void SLList<T>::beingNoSameElement() {
 			stagedPreNext = nullptr;
 			while (stagedPreNext) {
 				delete stagedPreNext;
+				--length;
 				stagedPreNext = stagedPreNext->next;
 			}
 		}
@@ -675,6 +698,7 @@ inline void SLList<T>::beingNoSameElement() {
 		Node<T>* temp = p;
 		p = p->next;
 		delete temp;
+		--length;
 	}
 }
 
@@ -720,10 +744,11 @@ inline void SLList<T>::emergetoNewList(SLList<T>& list) {
 			p = temp;
 		}
 	}
+	length += list.getLength();
 }
 
 /*
-* 生成一个新的具有两个递增链表（元素值唯一）的公共元素值的链表
+* 生成一个新的具有两个递增链表（元素值唯一）的公共元素值的链表, 不破坏原来的链表
 */
 template<class T>
 inline void SLList<T>::generateCommonVlaueList(SLList<T>& list, SLList<T>& generatedList) {
@@ -734,8 +759,10 @@ inline void SLList<T>::generateCommonVlaueList(SLList<T>& list, SLList<T>& gener
 		while (listP) {
 			if (listP->data == p->data) {
 				Node<T>* newNode = new Node<T>(listP->data, nullptr);
+				listP = listP->next;//这次更新可以减少一次冗余的比较
 				rear->getNext() = newNode;
 				rear = newNode;
+				generatedList.setLength(generatedList.getLength() + 1);
 				break;
 			}
 			else if (listP->data < p->data)
@@ -747,6 +774,82 @@ inline void SLList<T>::generateCommonVlaueList(SLList<T>& list, SLList<T>& gener
 			}
 		}
 		p = p->next;
+	}
+}
+
+/*
+* 生成一个新的具有两个递增链表（元素值唯一）的公共元素值的链表, 利用原来的链表的结点。
+* 结果保存在当前链表。
+*/
+template<class T>
+inline void SLList<T>::generateCommonVlaueList(SLList<T>& list) {
+	Node<T>* p = head->next;
+	Node<T>* pre = head;//使被摘取结点的链表的其他结点依然成链，便于释放。
+	Node<T>* listP = list.getHead();
+	Node<T>* newHeadNode = new Node<T>;//公共结点先连接到这个结点之后
+	int insertCnt = 0;
+	while (listP) {
+		while (p) {
+			if (p->data == listP->data) {
+				pre->next = p->next;
+				Node<T>* temp = p->next;//copy直接目标，避免在后面的被插入过程中被篡改
+
+				p->next = newHeadNode->next;
+				newHeadNode->next = p;
+
+				p = temp;//update,不同与上一个问题，此题中有摘取操作
+				++insertCnt;
+				break;
+			}
+			else if (p->data < listP->data) {
+				p = p->next;
+				pre = pre->next;
+			}
+			else {
+				break;
+			}
+		}
+		listP = listP->next;
+	}
+	p = head->next;
+	while (p) {
+		Node<T>* temp = p->next;
+		delete p;
+		p = temp;
+	}
+	head->next = newHeadNode->next;
+	if (newHeadNode)
+		delete newHeadNode;
+	length = insertCnt;
+}
+
+/*
+* 是否存在子序列，i.e. mode match.
+* 循环穷举
+*/
+template<class T>
+inline bool SLList<T>::modeMatch(SLList<T>& modeList) {
+	Node<T>* nextP = head->next;
+	Node<T>* p = nextP;
+	Node<T>* modeListP = modeList.getHead()->getNext();
+	//while(p){ while(modeListP) {...} }
+	while (p && modeListP) {//相等同步后移，不等“复原”。note:只要一层循环就足够（冗余条件）
+		if (p->data == modeListP->data)
+		{
+			p = p->next;
+			modeListP = modeListP->next;
+		}
+		else {
+			p = nextP->next;
+			nextP = nextP->next;
+			modeListP = modeList.getHead()->getNext();
+		}
+	}
+	if (!p) {
+		return false;
+	}
+	else if (!modeListP) {
+		return true;
 	}
 }
 
