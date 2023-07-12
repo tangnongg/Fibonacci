@@ -832,8 +832,9 @@ inline bool SLList<T>::modeMatch(SLList<T>& modeList) {
 	Node<T>* nextP = head->next;
 	Node<T>* p = nextP;
 	Node<T>* modeListP = modeList.getHead()->getNext();
-	//while(p){ while(modeListP) {...} }
-	while (p && modeListP) {//相等同步后移，不等“复原”。note:只要一层循环就足够（冗余条件）
+	//while(nextP){ while(p && modeListP) {...} } ,
+	//note:只要一层循环就足够。由于p先于nextP，所以只要nextP不为null, nextP就不会为null。外层的条件冗余了。
+	while (p && modeListP) {//相等同步后移，不等“复原”。
 		if (p->data == modeListP->data)
 		{
 			p = p->next;
