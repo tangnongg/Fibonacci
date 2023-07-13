@@ -35,6 +35,7 @@ public:
 	//		delete next;
 	//}
 
+	/*下面的接口不是必要的，因为已经在Node中声明了List是它的友元类，在List中可以直接访问Node的private，protected成员*/
 	const T& getData() {
 		return data;
 	}
@@ -45,9 +46,9 @@ public:
 	}
 };
 
-/*************************
+/***********************************************
 * 根据是否带头节点，是否带尾指针,可分为四个List类
-**************************/
+************************************************/
 
 
 /*******************************
@@ -561,6 +562,7 @@ inline void SLList<T>::emerge(SLList<T>& list) {
 */
 template<class T>
 inline void SLList<T>::print_and_Realease() {
+	std::cout << "***SLList<T>::print_and_Realease():***" << std::endl;
 	insertSort(0);
 	Node<T>* p = head->next;
 	head->next = nullptr;//if not to do this, it will become a wild pointer(its space is freed but it is not nullptr).
@@ -849,7 +851,7 @@ inline bool SLList<T>::modeMatch(SLList<T>& modeList) {
 	if (!p) {
 		return false;
 	}
-	else if (!modeListP) {
+	else {
 		return true;
 	}
 }
