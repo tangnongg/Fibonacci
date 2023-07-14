@@ -4,6 +4,7 @@ add_executable(catchMain catchMain.cpp
 						SingleLinkedList/SLList/testSLList.cpp
 						DoubleLinkedList/CDLList/testCDLList.cpp
 						SingleLinkedList/CSLList/testCSLList.cpp
+						DoubleLinkedList/DLList/testDLList.cpp
 						)
 
 target_link_libraries(catchMain 
@@ -11,5 +12,6 @@ target_link_libraries(catchMain
 					SLListlib 
 					CDLListlib
 					CSLListlib
+					DLListlib
 					)
 

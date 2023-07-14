@@ -13,10 +13,11 @@ add_executable (Main "MyApp.cpp")
 #也要根据子文件夹里的CMakeLists.txt编译子文件夹下的源代码
 add_subdirectory(Fibonacci)
 add_subdirectory(SqList)
+add_subdirectory(Catch)
 add_subdirectory(SingleLinkedList/SLList)
 add_subdirectory(SingleLinkedList/CSLList)
+add_subdirectory(DoubleLinkedList/DLList)
 add_subdirectory(DoubleLinkedList/CDLList)
-add_subdirectory(Catch)
 add_subdirectory(Test)
 
 
@@ -24,7 +25,10 @@ add_subdirectory(Test)
 target_link_libraries(Main PUBLIC Fibonaccilib
 						   PUBLIC SqListlib
 						   PUBLIC Catchlib
-						   PUBLIC SLListlib					  
+						   PUBLIC SLListlib	
+						   PUBLIC CSLListlib	
+						   PUBLIC DLListlib	
+						   PUBLIC CDLListlib	
 						   )	
 #target #include path						   
 target_include_directories(Main PUBLIC
