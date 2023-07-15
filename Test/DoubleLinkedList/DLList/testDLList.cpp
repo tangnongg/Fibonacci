@@ -13,3 +13,13 @@ TEST_CASE("testing for basic operations of DLList<int>", "") {
 	CHECK(list.getLength() == 4);
 }
 
+TEST_CASE("testing for _freq_ operations of DLList<int>", "") {
+	std::cout << "***testing for _freq_ operations of DLList<int>***" << std::endl;
+	DLList<int> list(4, 1, 2, 3, 4);
+	list.assignFreq(4, 4, 3, 2, 0);
+	list.printAll_and_Freq();
+	list.locate(4);
+	list.printAll_and_Freq();
+	list.locate(4);
+	list.printAll_and_Freq();
+}

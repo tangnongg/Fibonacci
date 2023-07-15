@@ -70,6 +70,7 @@ TEST_CASE("testing for the member function commonNode of SLList<int>", "") {
 }
 
 TEST_CASE("testing for the member function print_and_Realease of SLList<int>", "") {
+    std::cout << "***SLList<T>::print_and_Realease():***" << std::endl;
     SLList<int> list(6, 4, 2, 4, 3, 9, 4);
     list.print_and_Realease();
     CHECK(list.getLength() == 0);

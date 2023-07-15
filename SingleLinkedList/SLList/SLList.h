@@ -562,7 +562,6 @@ inline void SLList<T>::emerge(SLList<T>& list) {
 */
 template<class T>
 inline void SLList<T>::print_and_Realease() {
-	std::cout << "***SLList<T>::print_and_Realease():***" << std::endl;
 	insertSort(0);
 	Node<T>* p = head->next;
 	head->next = nullptr;//if not to do this, it will become a wild pointer(its space is freed but it is not nullptr).
