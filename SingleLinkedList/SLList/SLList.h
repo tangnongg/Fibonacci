@@ -171,6 +171,12 @@ public:
 	* 循环穷举
 	*/
 	bool modeMatch(SLList<T>& modeList);
+
+	/*
+	* 是否(尾部)有环
+	* 快慢指针思想
+	*/
+	bool is_with_a_Loop();
 };
 
 
@@ -853,6 +859,28 @@ inline bool SLList<T>::modeMatch(SLList<T>& modeList) {
 	else {
 		return true;
 	}
+}
+
+/*
+* 是否(尾部)有环
+* 快慢指针思想
+*/
+template<class T>
+inline bool SLList<T>::is_with_a_Loop() {
+	Node<T>* slow = head;
+	Node<T>* quick = head->next;
+	while (quick && slow != quick) {
+		quick = quick->next;
+		if (quick)
+			quick = quick->next;
+		else
+			return false;
+		slow = slow->next;
+	}
+	if (!quick)
+		return false;
+	else//slow在环里才会追上quick
+		return true;
 }
 
 

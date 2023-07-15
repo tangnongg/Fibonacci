@@ -177,6 +177,13 @@ TEST_CASE("testing for the member function modeMatch of SLList<int>", "") {
     CHECK(list.modeMatch(modeList)==true);
 }
 
+TEST_CASE("testing for the member function is_with_a_Loop of SLList<int>", "") {
+    SLList<char> list(3, 'a', 'a', 'd');
+    CHECK(list.is_with_a_Loop() == false);
+    list.getHead()->getNext()->getNext()->getNext() = list.getHead()->getNext()->getNext();
+    CHECK(list.is_with_a_Loop() == true);
+}
+
 
 /*type parametrized test cases*/
 /*
