@@ -543,7 +543,7 @@ inline Node<T>* SLList<T>::commonNode(SLList<T>& list) {
 			listP = listP->next;
 		}
 	}
-	//return nullptr;
+	return nullptr;//无公共结点
 }
 
 template<class T>
