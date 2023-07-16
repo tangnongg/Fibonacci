@@ -5,6 +5,8 @@ add_executable(catchMain catchMain.cpp
 						DoubleLinkedList/CDLList/testCDLList.cpp
 						SingleLinkedList/CSLList/testCSLList.cpp
 						DoubleLinkedList/DLList/testDLList.cpp
+						BiTree/testBiTree.cpp
+						BiTree/testSqBiTree.cpp
 						)
 
 target_link_libraries(catchMain 
@@ -13,5 +15,6 @@ target_link_libraries(catchMain
 					CDLListlib
 					CSLListlib
 					DLListlib
+					BiTreelib
 					)
 
