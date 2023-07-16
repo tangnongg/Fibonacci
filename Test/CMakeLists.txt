@@ -5,6 +5,7 @@ add_executable(catchMain catchMain.cpp
 						DoubleLinkedList/CDLList/testCDLList.cpp
 						SingleLinkedList/CSLList/testCSLList.cpp
 						DoubleLinkedList/DLList/testDLList.cpp
+						DataRepresentation/testDataRepresentation.cpp
 						)
 
 target_link_libraries(catchMain 
