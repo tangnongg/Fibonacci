@@ -1,5 +1,6 @@
 
 #include "catch.hpp"
+#include <iostream>
 
 TEST_CASE("testing for DataRepresentation", "") {
 	SECTION("408真题") {
@@ -27,5 +28,22 @@ TEST_CASE("testing for DataRepresentation", "") {
 		unsigned int usi_minus1 = 0xFFFFFFFF;//...0b1111
 		si = usi_minus1;
 		CHECK(si == -1);
+	}
+
+	SECTION("int被赋予超出范围的值") {
+		std::cout << "int被赋予超出范围的值：" << std::endl; 
+		int si = 0 + 0xffffffff;//超出范围 成了最大负数
+		CHECK(si == 0 + (0xffffffff - 0x100000000));
+
+		//cyclic
+		si = 0x80000000;//范围内 最小负数
+		std::cout << si << std::endl;
+		--si;//超出范围 成了最大正数
+		std::cout << si << std::endl;
+
+		si = 0x7fffffff;//范围内 最大正数
+		std::cout << si << std::endl;
+		++si;//超出范围 成了最小负数
+		std::cout << si << std::endl;
 	}
 }
