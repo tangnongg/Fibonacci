@@ -3,12 +3,15 @@
 #include <iomanip>
 #include <cmath>
 
+
+template<class T> class BiTree;
 template <class T>
 class SqBiTree {
+	friend class BiTree<T>;
 private:
 	T* dataArr;
-	int size;
-	int count;
+	int size;//数组大小
+	int count;//不是实际结点数量，而是最少花费的结点数量（含占位结点，不含dataArr[0]）,count是初始化列表中的元素个数。
 
 public:
 	SqBiTree() :
@@ -50,7 +53,10 @@ template<class T>
 inline SqBiTree<T>::SqBiTree(const int& size, const int& count, std::initializer_list<T> iniList) :
 	size(size), count(count)
 {
-	dataArr = new T[size + 1];//封装一下细节
+	if (size < count + 1) {
+		throw("wrong size or count!");
+	}
+	dataArr = new T[size];
 	dataArr[0] = -1;//不用
 	int index = 0;
 	for (auto elem : iniList)

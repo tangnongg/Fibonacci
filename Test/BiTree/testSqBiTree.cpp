@@ -1,20 +1,33 @@
 #include "catch.hpp"
 #include "SqBiTree.h"
+#include <string>
 
-TEST_CASE("", "") {
+//using Catch::Matchers::Equals;
+using namespace Catch::Matchers;
+
+TEST_CASE("testing for basic operations of SqBiTree", "") {
 	std::cout << "***testing for basic operations of SqBiTree***" << std::endl;
 
-	SqBiTree<int> biTree(5, 5, { 1,2,3,4,5 });
+	SqBiTree<int> biTree(6, 5, { 1,2,3,4,5 });
 	biTree.printAll();
 
-	SqBiTree<int> biTree2(3, 3, { 1,2,3});
+	CHECK_THROWS([] {
+		SqBiTree<int> biTreeException(5, 5, { 1,2,3,4,5 });
+		}());//note:lamda exppression must have the parenthesis in catch 
+
+	REQUIRE_THROWS_WITH([] {
+		SqBiTree<int> biTreeException(5, 5, { 1,2,3,4,5 });
+		}(), 
+		Equals("wrong size or count!"));
+
+	SqBiTree<int> biTree2(4, 3, { 1,2,3});
 	biTree2.printAll_in_Tree();
 
-	SqBiTree<int> biTree3(7, 7, { 1,2,3,4,5,6,7 });
+	SqBiTree<int> biTree3(8, 7, { 1,2,3,4,5,6,7 });
 	biTree3.printAll_in_Tree();
 
-	SqBiTree<int> biTree4(15, 15, { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 });
-	//SqBiTree<int> biTree4(15, 15, { 1,2,3,4,5,6,7,8,9,1,1,1,1,1,1 });
+	SqBiTree<int> biTree4(16, 15, { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 });
+	//SqBiTree<int> biTree4(16, 15, { 1,2,3,4,5,6,7,8,9,1,1,1,1,1,1 });
 	biTree4.printAll_in_Tree();
 	CHECK(biTree4.getHigh_of_Node(1) == 1);
 	CHECK(biTree4.getHigh_of_Node(2) == 2);
@@ -23,7 +36,6 @@ TEST_CASE("", "") {
 	CHECK(biTree4.getHigh_of_Node(15) == 4);
 	CHECK(biTree4.getHigh_of_Node(16) == -1);
 	
-
 	CHECK(biTree4.getClosestCommonAncestor_of_TwoNodes(14, 15) == 7);
 	CHECK(biTree4.getClosestCommonAncestor_of_TwoNodes(12, 15) == 3);
 	CHECK(biTree4.getClosestCommonAncestor_of_TwoNodes(4, 3) == 1);
