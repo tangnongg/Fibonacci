@@ -16,7 +16,8 @@ public:
 	{}
 };
 
-template<class BiTree
+template<class T>
+class BiTree
 {
 private:
 	Node<T>* root;
