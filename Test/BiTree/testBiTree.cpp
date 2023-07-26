@@ -26,9 +26,12 @@ TEST_CASE("testing for basic operations of BiTree", "") {
 }
 
 TEST_CASE("testing for traversePostOrder_NonRecursive member function of BiTree", "") {
-	SqBiTree<int> sqBiTree(4, 3, { 1,2,3 });
-	BiTree<int> biTree;
-	biTree.createBiTree_from_SqBiTree(sqBiTree);
-
-	biTree.traversePostOrder_NonRecursive();
+	SqBiTree<int> sqBiTree1(9, 8, { 1,2,3,4,5,6,7,8 });
+	BiTree<int> biTree1;
+	biTree1.createBiTree_from_SqBiTree(sqBiTree1);
+	std::vector<int> pathVec;
+	biTree1.getPath_fromAncestortoDescendant(8, pathVec);
+	std::vector<int> targetVec;
+	targetVec.assign({ 8,4,2,1 });
+	CHECK_THAT(targetVec, Equals(pathVec));
 }

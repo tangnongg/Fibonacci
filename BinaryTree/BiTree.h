@@ -95,6 +95,14 @@ public:
 		traversePostOrder_NonRecursive(root);
 		std::cout << std::endl;
 	}
+
+	/*
+	* 改编非递归后序遍历，获取祖先结点到子孙结点的路径
+	*/
+	void getPath_fromAncestortoDescendant(BiNode<T>* ancestor, T descendant, std::vector<T>& retVec);
+	void getPath_fromAncestortoDescendant(T descendant, std::vector<T>& retVec) {
+		getPath_fromAncestortoDescendant(root, descendant, retVec);
+	}
 };
 
 
@@ -103,6 +111,8 @@ public:
 /*类模板的成员函数的【全 - 部参数】特例化1 */
 template<>
 inline void BiTree<int>::createBiTree_from_SqBiTree(SqBiTree<int>& sqBiTree, int i, BiNode<int>*& parent) {//note:不能把成员变量root作为成员函数参数默认值
+	if (parent != nullptr)//初始树必须为空树，避免内存泄露
+		return;
 	if (sqBiTree.dataArr[i] != -1 && i <= sqBiTree.count)
 		parent = new BiNode<int>(sqBiTree.dataArr[i], nullptr, nullptr);
 	else
@@ -119,6 +129,8 @@ inline void BiTree<int>::createBiTree_from_SqBiTree(SqBiTree<int>& sqBiTree) {//
 /*类模板的成员函数的【全 - 部参数】特例化2*/
 template<>
 inline void BiTree<char>::createBiTree_from_SqBiTree(SqBiTree<char>& sqBiTree, int i, BiNode<char>*& parent) {
+	if (parent != nullptr)//初始树必须为空树，避免内存泄露
+		return;
 	if (sqBiTree.dataArr[i] != '*' && i <= count)
 		parent = new BiNode<char>(sqBiTree.dataArr[i], nullptr, nullptr);
 	createBiTree_from_SqBiTree(sqBiTree, 2 * i, parent->lchild);
@@ -198,6 +210,44 @@ inline void BiTree<T>::traversePostOrder_NonRecursive(BiNode<T>* parent) {
 			else {
 				stk.pop();
 				std::cout << p->data << ",";
+				recent = p;
+				p = nullptr;
+			}
+		}
+	}
+}
+
+/*
+* 改编非递归后序遍历，获取祖先结点到子孙结点的路径
+*/
+template<class T>
+inline void BiTree<T>::getPath_fromAncestortoDescendant(BiNode<T>* ancestor, T descendant, std::vector<T>& retVec) {
+	std::stack<BiNode<T>*> stk;
+	BiNode<T>* recent = nullptr;
+	BiNode<T>* p = ancestor;
+	while (p || !stk.empty()) {
+		if (p) {
+			stk.push(p);
+			p = p->lchild;
+		}
+		else {
+			p = stk.top();
+			if (p->rchild && recent != p->rchild) {
+				p = p->rchild;
+			}
+			else {
+				stk.pop();
+				/**********************************/
+				if (p->data == descendant) {
+					retVec.push_back(p->data);
+					while (!stk.empty())
+					{
+						retVec.push_back(stk.top()->data);
+						stk.pop();
+					}
+					break;
+				}
+				/***********************************/
 				recent = p;
 				p = nullptr;
 			}
