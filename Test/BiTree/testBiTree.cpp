@@ -24,3 +24,11 @@ TEST_CASE("testing for basic operations of BiTree", "") {
 	//	biTree.traversePostOrder();
 	//}
 }
+
+TEST_CASE("testing for traversePostOrder_NonRecursive member function of BiTree", "") {
+	SqBiTree<int> sqBiTree(4, 3, { 1,2,3 });
+	BiTree<int> biTree;
+	biTree.createBiTree_from_SqBiTree(sqBiTree);
+
+	biTree.traversePostOrder_NonRecursive();
+}

@@ -1,6 +1,7 @@
 #include "SqBiTree.h"
 #include <vector>
 #include <iostream>
+#include <stack>
 
 
 template<class T> class BiNode;
@@ -85,6 +86,15 @@ public:
 	//todo:层序遍历，图形化输出
 
 	//todo:非递归后序遍历，和相关算法（祖先结点到孩子结点的路径，树高）
+	/*
+	* 非递归后序遍历
+	*/
+	void traversePostOrder_NonRecursive(BiNode<T>* parent);
+	void traversePostOrder_NonRecursive() {
+		std::cout << "非递归后序遍历序列：";	
+		traversePostOrder_NonRecursive(root);
+		std::cout << std::endl;
+	}
 };
 
 
@@ -164,6 +174,34 @@ inline void BiTree<T>::traversePostOrder(BiNode<T>* parent) {
 		traversePostOrder(parent->lchild);
 		traversePostOrder(parent->rchild);
 		std::cout << parent->data;
+	}
+}
+
+/*
+* 非递归后序遍历
+*/
+template<class T>
+inline void BiTree<T>::traversePostOrder_NonRecursive(BiNode<T>* parent) {
+	std::stack<BiNode<T>*> stk;
+	BiNode<T>* recent = nullptr;
+	BiNode<T>* p = parent;
+	while (p || !stk.empty()) {
+		if (p) {
+			stk.push(p);
+			p = p->lchild;
+		}
+		else {
+			p = stk.top();
+			if (p->rchild && recent != p->rchild) {
+				p = p->rchild;
+			}
+			else {
+				stk.pop();
+				std::cout << p->data << ",";
+				recent = p;
+				p = nullptr;
+			}
+		}
 	}
 }
 
