@@ -101,6 +101,7 @@ public:
 	* 原地逆置，带头结点
 	*/
 	void reverse();
+	void reverse(Node<T>* head);
 
 	/*
 	* 原地排序，带头结点。
@@ -177,6 +178,25 @@ public:
 	* 快慢指针思想
 	*/
 	bool is_with_a_Loop();
+
+	/*
+	* 408真题
+	* 获取单链表倒数第K个结点的元素 
+	* ret:false for failure，true for having the Kth node from the bottom, retValue is the target value.
+	*/
+	bool gettheKth_fromtheBottom(T& retVlaue, int k);
+
+	/*
+	* 408真题
+	* |data|<=n, 且data都是整数。使表中无绝对值相同的元素,保留第一次出现的。
+	*/
+	void beingNoElement_withSameAbsValue(int n);
+
+	/*
+	* 408真题
+	* {a1,a2,a3,...,an-1,an} --> {a1,an,a2,an-1,a3...}
+	*/
+	void rearrange();
 };
 
 
@@ -461,6 +481,19 @@ inline void SLList<T>::deleteMin() {
 */
 template<class T>
 inline void SLList<T>::reverse() {
+	Node<T>* p = head->next;
+	head->next = nullptr;
+	Node<T>* laterLs = nullptr;
+	while (p) {
+		laterLs = p->next;
+		p->next = head->next;
+		head->next = p;
+		p = laterLs;
+	}
+}
+
+template<class T>
+inline void SLList<T>::reverse(Node<T>* head) {
 	Node<T>* p = head->next;
 	head->next = nullptr;
 	Node<T>* laterLs = nullptr;
@@ -881,6 +914,87 @@ inline bool SLList<T>::is_with_a_Loop() {
 		return false;
 	else//slow在环里才会追上quick
 		return true;
+}
+
+/*
+* 408真题
+* 获取单链表倒数第K个结点的元素
+* ret:false for failure，true for having the Kth node from the bottom, retValue is the target value.
+*/
+template<class T>
+inline bool SLList<T>::gettheKth_fromtheBottom(T& retVlaue, int k) {
+	Node<T>* front = head->next;
+	Node<T>* behind = head->next;
+	while (k) {
+		if (!front)
+			return false;
+		front = front->next;
+		--k;
+	}
+	//at the moment, behind=head->next, behind lags behind front k nodes, unknowing front is nullptr or not.
+	while (front) {
+		front = front->next;
+		behind = behind->next;
+	}
+	retVlaue = behind->data;
+}
+
+/*
+* 408真题
+* |data|<=n, 且data都是整数。使表中无绝对值相同的元素,保留第一次出现的。
+*/
+template<class T>
+inline void SLList<T>::beingNoElement_withSameAbsValue(int n) {
+	volatile bool* flagArr = new bool[n + 1];
+	for (int i = 0; i <= n; ++i) {
+		flagArr[i] = false;
+	}
+	Node<int>* p = head->next;
+	Node<int>* pre = head;
+	Node<int>* temp = nullptr;
+	while (p) {
+		int abs = std::abs(p->data);
+		if (flagArr[abs] == false) {
+			flagArr[abs] = true;
+			p = p->next;
+			pre = pre->next;
+		}
+		else {
+			pre->next = p->next;
+			temp = p;
+			p = p->next;
+			delete temp;
+		}
+	}
+}
+
+/*
+* 408真题
+* {a1,a2,a3,...,an-1,an} --> {a1,an,a2,an-1,a3...}
+*/
+template<class T>
+inline void SLList<T>::rearrange() {
+	Node<T>* pFormerLs = head->next;
+	Node<T>* pLaterLs = nullptr;//前表的最后结点需要断链。
+	Node<T>* pLaterLsPre = head;
+	int halfNum = (length + 1) / 2;//令前表长，后表短，优点：每个后表结点都会被插入到前表，操作统一，不需要做额外的判断。
+	halfNum;//pLaterLsPre从head移动到后表的头结点所需跳数		
+	while (halfNum)
+	{
+		pLaterLsPre = pLaterLsPre->next;
+		--halfNum;
+	}
+	reverse(pLaterLsPre);
+	pLaterLs = pLaterLsPre->next;
+	pLaterLsPre->next = nullptr;
+	while (pLaterLs) {
+		Node<T>* nextPLaterLs = pLaterLs->next;
+		pLaterLs->next = pFormerLs->next;
+		pFormerLs->next = pLaterLs;
+
+		pLaterLs = nextPLaterLs;
+		pFormerLs = pFormerLs->next->next;//前表只会更长，必定不为nullptr
+	}
 }
 
 

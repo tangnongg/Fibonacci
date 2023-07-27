@@ -184,6 +184,45 @@ TEST_CASE("testing for the member function is_with_a_Loop of SLList<int>", "") {
     CHECK(list.is_with_a_Loop() == true);
 }
 
+TEST_CASE("testing for the member function gettheKth_fromtheBottom of SLList<int>", "") {
+    SLList<char> list(6, 'a', 'a', 'd', 'b', 'c', 'a');
+    char retValue;
+    list.gettheKth_fromtheBottom(retValue, 4);
+
+    CHECK(retValue == 'd');
+}
+
+
+TEST_CASE("testing for the member function beingNoElement_withSameAbsValue of SLList<int>", "") {
+    SLList<int> list(6, 1, -2, 1, 2, 5, -1);
+    list.beingNoElement_withSameAbsValue(5);
+    std::vector<int> listVecAfterOp;
+    list.printAll_to_Vector(listVecAfterOp);
+    std::vector<int> targetVec;
+    targetVec.assign({ 1,-2,5 });
+    CHECK_THAT(targetVec, Equals(listVecAfterOp));
+}
+
+TEST_CASE("testing for the member function rearrange of SLList<int>", "") {
+    SECTION("part1") {
+        SLList<int> list(6, 1, 2, 3, 4, 5, 6);
+        list.rearrange();
+        std::vector<int> listVecAfterOp;
+        list.printAll_to_Vector(listVecAfterOp);
+        std::vector<int> targetVec;
+        targetVec.assign({ 1,6,2,5,3,4 });
+        CHECK_THAT(targetVec, Equals(listVecAfterOp));
+    }
+    SECTION("part2") {
+        SLList<int> list(7, 1, 2, 3, 4, 5, 6, 7);
+        list.rearrange();
+        std::vector<int> listVecAfterOp;
+        list.printAll_to_Vector(listVecAfterOp);
+        std::vector<int> targetVec;
+        targetVec.assign({ 1,7,2,6,3,5,4 });
+        CHECK_THAT(targetVec, Equals(listVecAfterOp));
+    }
+}
 
 /*type parametrized test cases*/
 /*
