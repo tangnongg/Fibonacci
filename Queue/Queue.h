@@ -13,8 +13,9 @@ class Queue {
 private:
 	T* dataArr;
 	int size;
-	int frontIdx;//非初始状态下，frontIdx指向队头，rearIdx指向队尾。
+	int frontIdx;//非初始状态下，frontIdx指向队头，rearIdx指向队尾的下一个位置。
 	int rearIdx;//initial state(empty queue):frontIdx=0, rearIdx=0.
+	//int count;//不维护。如果增设count成员变量表示当前队内元素个数，方便判空、满。就不需要采用“牺牲一个单元法”区分判空、满条件
 
 public:
 	Queue():
@@ -87,8 +88,8 @@ public:
 	* 访问队尾
 	*/
 	const T& back() {
-		if(!empty())
-			return dataArr[nearIdx];
+		if (!empty())
+			return dataArr[(rearIdx - 1 + size) % size];
 		else
 			throw "empty queue.";
 	}

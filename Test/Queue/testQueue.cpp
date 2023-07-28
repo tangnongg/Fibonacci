@@ -11,6 +11,8 @@ TEST_CASE("testing for basic Operations of Queue", "") {
 		++i;
 	}
 
+	CHECK(queue.back() == 5);
+
 	CHECK_THROWS([&]() {
 		queue.push(6);
 		}());
