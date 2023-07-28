@@ -582,7 +582,7 @@ inline Node<T>* SLList<T>::commonNode(SLList<T>& list) {
 			listP = listP->next;
 		}
 	}
-	//return nullptr;
+	return nullptr;
 }
 
 template<class T>
@@ -937,6 +937,7 @@ inline bool SLList<T>::gettheKth_fromtheBottom(T& retVlaue, int k) {
 		behind = behind->next;
 	}
 	retVlaue = behind->data;
+	return true;
 }
 
 /*

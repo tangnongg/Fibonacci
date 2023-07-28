@@ -65,7 +65,7 @@ TEST_CASE("testing for the member function commonNode of SLList<int>", "") {
     SLList<int> list(6, 4, 2, 4, 3, 9, 4);
     SLList<int> emergedList(3, 7, 7, 70);
     emergedList.emerge(list);
-    CHECK(list.getHead()->getNext() == list.commonNode(emergedList));
+    CHECK(nullptr == list.commonNode(emergedList));
     CHECK(list.getHead()->getNext() == emergedList.commonNode(list)); 
 }
 

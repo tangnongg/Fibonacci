@@ -18,6 +18,8 @@ add_subdirectory(SingleLinkedList/SLList)
 add_subdirectory(SingleLinkedList/CSLList)
 add_subdirectory(DoubleLinkedList/DLList)
 add_subdirectory(DoubleLinkedList/CDLList)
+add_subdirectory(Stack)
+add_subdirectory(Queue)
 add_subdirectory(Test)
 
 
@@ -29,6 +31,8 @@ target_link_libraries(Main PUBLIC Fibonaccilib
 						   PUBLIC CSLListlib	
 						   PUBLIC DLListlib	
 						   PUBLIC CDLListlib	
+						   PUBLIC Stacklib
+						   PUBLIC Queuelib
 						   )	
 #target #include path						   
 target_include_directories(Main PUBLIC

@@ -6,7 +6,7 @@ add_executable(catchMain catchMain.cpp
 						SingleLinkedList/CSLList/testCSLList.cpp
 						DoubleLinkedList/DLList/testDLList.cpp
 						DataRepresentation/testDataRepresentation.cpp
-						)
+						 "Queue/testQueue.cpp" "Stack/testStack.cpp")
 
 target_link_libraries(catchMain 
 					Catchlib 
@@ -14,5 +14,7 @@ target_link_libraries(catchMain
 					CDLListlib
 					CSLListlib
 					DLListlib
+					Stacklib
+					Queuelib
 					)
 
