@@ -6,7 +6,11 @@ add_executable(catchMain catchMain.cpp
 						SingleLinkedList/CSLList/testCSLList.cpp
 						DoubleLinkedList/DLList/testDLList.cpp
 						DataRepresentation/testDataRepresentation.cpp
-						 "Queue/testQueue.cpp" "Stack/testStack.cpp" "StackApplications/testStackApplications.cpp" )
+						 "Queue/testQueue.cpp" "Stack/testStack.cpp" "StackApplications/testStackApplications.cpp" 
+						BiTree/testBiTree.cpp
+						BiTree/testSqBiTree.cpp
+						)
+
 
 target_link_libraries(catchMain 
 					Catchlib 
@@ -17,5 +21,6 @@ target_link_libraries(catchMain
 					Stacklib
 					Queuelib
 					StackApplicationslib
+					BiTreelib
 					)
 
