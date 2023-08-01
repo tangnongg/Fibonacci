@@ -582,11 +582,7 @@ inline Node<T>* SLList<T>::commonNode(SLList<T>& list) {
 			listP = listP->next;
 		}
 	}
-<<<<<<< HEAD
-	return nullptr;
-=======
 	return nullptr;//无公共结点
->>>>>>> implement_Tree&BinaryTree
 }
 
 template<class T>

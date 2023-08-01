@@ -22,4 +22,5 @@ TEST_CASE("testing for _freq_ operations of DLList<int>", "") {
 	list.printAll_and_Freq();
 	list.locate(4);
 	list.printAll_and_Freq();
+	std::cout << "***testing for _freq_ operations of DLList<int>***" << std::endl;
 }

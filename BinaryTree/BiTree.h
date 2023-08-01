@@ -1,4 +1,8 @@
+#pragma once
+
 #include "SqBiTree.h"
+//#include <Queue>//队列在树的层序遍历中的应用
+//#include "Queue.h"//vs is shit!!
 #include <vector>
 #include <iostream>
 #include <stack>
@@ -8,7 +12,7 @@ template<class T> class BiNode;
 template<class T>
 class BiNode {
 	friend class BiTree<T>;
-private:
+protected:
 	T data;
 	BiNode<T>* lchild;
 	BiNode<T>* rchild;
@@ -35,6 +39,9 @@ public:
 		root(nullptr), count(0)
 	{}
 
+	/*
+	* 用后序析构
+	*/
 	void traversePostOrder_for_Delete(BiNode<T>* parent);
 
 	/*
@@ -74,6 +81,16 @@ public:
 	}
 
 	/*
+	* 以层序序列的顺序把元素输出
+	*/
+	void traverseLevelOrder(BiNode<T>* parent);
+	void traverseLevelOrder() {
+		std::cout << "层序遍历序列：";
+		traverseLevelOrder(root);
+		std::cout << std::endl;
+	}
+
+	/*
 	* 以后序序列的顺序把元素输出
 	*/
 	void traversePostOrder(BiNode<T>* parent);
@@ -83,9 +100,6 @@ public:
 		std::cout << std::endl;
 	}
 
-	//todo:层序遍历，图形化输出
-
-	//todo:非递归后序遍历，和相关算法（祖先结点到孩子结点的路径，树高）
 	/*
 	* 非递归后序遍历
 	*/
@@ -103,7 +117,27 @@ public:
 	void getPath_fromAncestortoDescendant(T descendant, std::vector<T>& retVec) {
 		getPath_fromAncestortoDescendant(root, descendant, retVec);
 	}
+
+	/*
+	* 求二叉树的高度，递归方式
+	*/
+	int getHigh(BiNode<T>* parent);
+	int getHigh() {
+		return getHigh(root);
+	}
+
+	/*
+	* 改编非递归后序遍历，求二叉树的高度
+	*/
+	int getHigh_PostOrder_NonRecursive(BiNode<T>* parent);
+	int getHigh_PostOrder_NonRecursive() {
+		return getHigh_PostOrder_NonRecursive(root);
+	}
 };
+
+
+
+
 
 
 
@@ -174,6 +208,25 @@ inline void BiTree<T>::printAlltoVecPreOrder(BiNode<T>* parent, std::vector<T>& 
 		vec.push_back(parent->data);
 		printAlltoVecPreOrder(parent->lchild, vec);
 		printAlltoVecPreOrder(parent->rchild, vec);
+	}
+}
+
+/*
+* 以层序序列的顺序把元素输出
+*/
+template<class T>
+inline void BiTree<T>::traverseLevelOrder(BiNode<T>* parent) {
+	Queue<BiNode<T>*> que(100);
+	que.push(parent);
+	BiNode<T>* p = nullptr;
+	while (!que.empty()) {
+		p = que.front();
+		std::cout << p->data << ",";
+		que.pop();
+		if (p->lchild)
+			que.push(p->lchild);
+		if (p->rchild)
+			que.push(p->rchild);
 	}
 }
 
@@ -254,5 +307,57 @@ inline void BiTree<T>::getPath_fromAncestortoDescendant(BiNode<T>* ancestor, T d
 		}
 	}
 }
+
+/*
+* 求二叉树的高度，递归方式
+*/
+template<class T>
+inline int BiTree<T>::getHigh(BiNode<T>* parent) {
+	if (parent) {
+		int lHigh = getHigh(parent->lchild);
+		int rHigh = getHigh(parent->rchild);
+		return lHigh > rHigh ? lHigh + 1 : rHigh + 1;
+	}
+	else
+		return 0;
+}
+
+/*
+* 改编非递归后序遍历，求二叉树的高度
+*/
+template<class T>
+inline int BiTree<T>::getHigh_PostOrder_NonRecursive(BiNode<T>* parent) {
+	std::stack<BiNode<T>*> stk;
+	BiNode<T>* recent = nullptr;
+	BiNode<T>* p = parent;
+	int stkDeepth = 0;
+	int maxStkDeepth = 0;
+	while (p || !stk.empty()) {
+		if (p) {
+			stk.push(p);
+			++stkDeepth;
+			maxStkDeepth = stkDeepth > maxStkDeepth ? stkDeepth : maxStkDeepth;
+			p = p->lchild;
+		}
+		else {
+			p = stk.top();
+			if (p->rchild && recent != p->rchild) {
+				p = p->rchild;
+			}
+			else {
+				stk.pop();
+				--stkDeepth;
+				std::cout << p->data << ",";
+				recent = p;
+				p = nullptr;
+			}
+		}
+	}
+	return maxStkDeepth;
+}
+
+
+
+
 
 

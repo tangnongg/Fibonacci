@@ -76,6 +76,7 @@ TEST_CASE("testing for the member function print_and_Realease of SLList<int>", "
     //delete释放了指针所指的空间，不会随后把该指针指向nullptr，指向不变
     //CHECK(list.getHead()->getNext() == nullptr);
     //list.printAll();
+    std::cout << "***SLList<T>::print_and_Realease():***" << std::endl;
 }
 
 TEST_CASE("testing for the member function divide_into_Two of SLList<int>", "") {

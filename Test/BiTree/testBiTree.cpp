@@ -1,6 +1,7 @@
 #include "catch.hpp"
 #include "BiTree.h"
 using namespace Catch::Matchers;
+#include "Queue.h"
 
 TEST_CASE("testing for basic operations of BiTree", "") {
 	SECTION("part 1") {
@@ -35,3 +36,14 @@ TEST_CASE("testing for traversePostOrder_NonRecursive member function of BiTree"
 	targetVec.assign({ 8,4,2,1 });
 	CHECK_THAT(targetVec, Equals(pathVec));
 }
+
+TEST_CASE("testing for traverseLevelOrder member function of BiTree", "") {
+	SqBiTree<int> sqBiTree1(9, 8, { 1,2,3,4,5,6,7,8 });
+	BiTree<int> biTree1;
+	biTree1.createBiTree_from_SqBiTree(sqBiTree1);
+	//biTree1.traverseLevelOrder();
+
+	CHECK(4 == biTree1.getHigh());
+	CHECK(4 == biTree1.getHigh_PostOrder_NonRecursive());
+}
+

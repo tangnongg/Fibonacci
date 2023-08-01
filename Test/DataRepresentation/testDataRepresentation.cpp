@@ -31,7 +31,7 @@ TEST_CASE("testing for DataRepresentation", "") {
 	}
 
 	SECTION("int被赋予超出范围的值") {
-		std::cout << "int被赋予超出范围的值：" << std::endl; 
+		std::cout << "***int被赋予超出范围的值：***" << std::endl; 
 		int si = 0 + 0xffffffff;//超出范围 成了最大负数
 		CHECK(si == 0 + (0xffffffff - 0x100000000));
 
@@ -45,5 +45,6 @@ TEST_CASE("testing for DataRepresentation", "") {
 		std::cout << si << std::endl;
 		++si;//超出范围 成了最小负数
 		std::cout << si << std::endl;
+		std::cout << "***int被赋予超出范围的值：***" << std::endl;
 	}
 }

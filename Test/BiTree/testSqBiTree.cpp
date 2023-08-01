@@ -7,9 +7,8 @@ using namespace Catch::Matchers;
 
 TEST_CASE("testing for basic operations of SqBiTree", "") {
 	std::cout << "***testing for basic operations of SqBiTree***" << std::endl;
-
 	SqBiTree<int> biTree(6, 5, { 1,2,3,4,5 });
-	biTree.printAll();
+	//biTree.printAll();	
 
 	CHECK_THROWS([] {
 		SqBiTree<int> biTreeException(5, 5, { 1,2,3,4,5 });
@@ -29,6 +28,8 @@ TEST_CASE("testing for basic operations of SqBiTree", "") {
 	SqBiTree<int> biTree4(16, 15, { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 });
 	//SqBiTree<int> biTree4(16, 15, { 1,2,3,4,5,6,7,8,9,1,1,1,1,1,1 });
 	biTree4.printAll_in_Tree();
+	std::cout << "***testing for basic operations of SqBiTree***" << std::endl;
+
 	CHECK(biTree4.getHigh_of_Node(1) == 1);
 	CHECK(biTree4.getHigh_of_Node(2) == 2);
 	CHECK(biTree4.getHigh_of_Node(3) == 2);
