@@ -37,7 +37,7 @@ TEST_CASE("testing for traversePostOrder_NonRecursive member function of BiTree"
 	CHECK_THAT(targetVec, Equals(pathVec));
 }
 
-TEST_CASE("testing for traverseLevelOrder member function of BiTree", "") {
+TEST_CASE("testing for member functions of BiTree, traverseLevelOrder and two versions of getHigh", "") {
 	SqBiTree<int> sqBiTree1(9, 8, { 1,2,3,4,5,6,7,8 });
 	BiTree<int> biTree1;
 	biTree1.createBiTree_from_SqBiTree(sqBiTree1);
@@ -47,3 +47,34 @@ TEST_CASE("testing for traverseLevelOrder member function of BiTree", "") {
 	CHECK(4 == biTree1.getHigh_PostOrder_NonRecursive());
 }
 
+TEST_CASE("testing for member functions of BiTree, generateBiTree_Pre_and_In", "") {
+	int preSeq[] = {0,1,2,4,5,6,3};
+	int inSeq[] = {0,4,2,6,5,1,3};
+	BiTree<int> biTree;
+	biTree.generateBiTree_Pre_and_In(preSeq, 1, 6, inSeq, 1, 6);
+	//biTree.traverseLevelOrder();
+	std::vector<int> biTreeVec;
+	biTree.printAlltoVecPreOrder(biTreeVec);
+	std::vector<int> targetVec;
+	targetVec.assign({ 1,2,4,5,6,3 });
+	CHECK_THAT(biTreeVec, Equals(targetVec));
+}
+
+TEST_CASE("testing for member functions of BiTree, isCompleteBinaryTree", "") {
+	SqBiTree<int> sqBiTree1(9, 8, { 1,2,3,4,5,6,7,8 }); 
+	BiTree<int> biTree1;
+	biTree1.createBiTree_from_SqBiTree(sqBiTree1);
+	CHECK(true == biTree1.isCompleteBinaryTree());
+
+	SqBiTree<int> sqBiTree2(8, 7, { 1,2,3,-1,-1,5,6 });
+	BiTree<int> biTree2;
+	biTree2.createBiTree_from_SqBiTree(sqBiTree2);
+	CHECK(false == biTree2.isCompleteBinaryTree());
+}
+
+TEST_CASE("testing for member functions of BiTree, getNodeCountDegree2", "") {
+	SqBiTree<int> sqBiTree1(9, 8, { 1,2,3,4,5,6,7,8 });
+	BiTree<int> biTree1;
+	biTree1.createBiTree_from_SqBiTree(sqBiTree1);
+	CHECK(3 == biTree1.getNodeCountDegree2());
+}

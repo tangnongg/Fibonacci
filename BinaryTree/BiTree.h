@@ -133,6 +133,58 @@ public:
 	int getHigh_PostOrder_NonRecursive() {
 		return getHigh_PostOrder_NonRecursive(root);
 	}
+
+	/*
+	* generate the tree according to preSeq and inSeq
+	* the trick:两次划分左右子树（子序列），一次在中序，一次在前序。
+	* input:前序和中序元素值序列，由于要查找root在中序中的位置，故假设元素值无重复。输入数组从1开始存放（对本题无益处）
+	*/
+	void generateBiTree_Pre_and_In(T* preSeq, int sPre, int ePre, T* inSeq, int sIn, int eIn, BiNode<T>*& parent);
+	void generateBiTree_Pre_and_In(T* preSeq, int sPre, int ePre, T* inSeq, int sIn, int eIn) {
+		generateBiTree_Pre_and_In(preSeq, sPre, ePre, inSeq, sIn, eIn, root);
+	}
+
+	/*
+	* 判断二叉树（链式存储）是不是完全二叉树
+	* 仿照顺序存储的方法，在层序序列中第一个出现的null结点之后是否还有非null结点。
+	*/
+	bool isCompleteBinaryTree();
+	
+	/*
+	* 获得包含“null”的层序遍历序列
+	* 改编自层序遍历，改变孩子入队条件，出队判队头是否为null
+	*/
+	void getPostSeqIncludingNull_TraverseLevelOrder(std::vector<T>& postSeqVec);
+
+	/*
+	* 获得双分支结点的数目
+	*/
+	int getNodeCountDegree2(BiNode<T>* parent);
+	int getNodeCountDegree2() {
+		return getNodeCountDegree2(root);
+	}
+
+	/*
+	* 交换所有结点的左右子树
+	*/
+
+
+	/*
+	* 获取先序遍历第K个结点的值
+	*/
+
+	/*
+	* 对于每个值为X的结点，删除以它为根的子树，并释放相应空间
+	*/
+
+	/*
+	* 查找值为X的结点，打印它的所有祖先
+	* 假设元素值唯一
+	*/
+
+	/*
+	* 找到p,q最近公共祖先结点
+	*/
 };
 
 
@@ -347,7 +399,6 @@ inline int BiTree<T>::getHigh_PostOrder_NonRecursive(BiNode<T>* parent) {
 			else {
 				stk.pop();
 				--stkDeepth;
-				std::cout << p->data << ",";
 				recent = p;
 				p = nullptr;
 			}
@@ -356,7 +407,81 @@ inline int BiTree<T>::getHigh_PostOrder_NonRecursive(BiNode<T>* parent) {
 	return maxStkDeepth;
 }
 
+/*
+* generate the tree according to preSeq and inSeq
+* the trick:两次划分左右子树（子序列），一次在中序，一次在前序。
+* input:前序和中序元素值序列，由于要查找root在中序中的位置，故假设元素值无重复。输入数组从1开始存放（对本题无益处）
+*/
+template<class T>
+inline void BiTree<T>::generateBiTree_Pre_and_In(T* preSeq, int sPre, int ePre, T* inSeq, int sIn, int eIn, BiNode<T>*& parent) {
+	parent = new BiNode<T>(preSeq[sPre], nullptr, nullptr);
+	int rootIdx_in_InSeq = 1;
+	while (parent->data != inSeq[rootIdx_in_InSeq])
+		++rootIdx_in_InSeq;
+	int lenLSeq = (rootIdx_in_InSeq - 1) - sIn + 1;
+	int lenRSeq = eIn - (rootIdx_in_InSeq + 1) + 1;
+	//rootIdx_in_InSeq， lenLSeq， lenRSeq
+	if (lenLSeq)
+		generateBiTree_Pre_and_In(preSeq, sPre + 1, sPre + lenLSeq, inSeq, sIn, rootIdx_in_InSeq - 1, parent->lchild);
+	if (lenRSeq)
+		generateBiTree_Pre_and_In(preSeq, sPre + lenLSeq + 1, ePre, inSeq, rootIdx_in_InSeq + 1, eIn, parent->rchild);
+}
 
+/*
+* 判断二叉树（链式存储）是不是完全二叉树
+* 仿照顺序存储的方法，在层序序列中第一个出现的null结点之后是否还有非null结点。
+*/
+template<class T>
+inline bool BiTree<T>::isCompleteBinaryTree() {
+	std::vector<T> postSeqVec;
+	getPostSeqIncludingNull_TraverseLevelOrder(postSeqVec);
+	bool fundNull = false;
+	for (const auto& elem : postSeqVec) {
+		if (elem == -1 && fundNull == false) {//第一次发现-1，标记fundNull=true
+			fundNull = true;
+			//continue;//在后续中找，跳过本轮,不是必要
+		}
+		if (elem != -1 && fundNull == true)//在fundNull=true的条件下，发现后序有非-1出现
+			return false;
+	}
+	return true;
+}
+
+/*
+* 获得包含“null”的层序遍历序列
+* 改编自层序遍历，改变孩子入队条件，出队判队头是否为null
+*/
+template<class T>
+inline void BiTree<T>::getPostSeqIncludingNull_TraverseLevelOrder(std::vector<T>& postSeqVec) {
+	Queue<BiNode<T>*> que(100);
+	que.push(root);
+	BiNode<T>* p = nullptr;
+	while (!que.empty()) {
+		p = que.front();
+		que.pop();
+		//对出队结点判Null,非Null时，直接入队左右孩子（无论是否Null）
+		if (p) {
+			que.push(p->lchild);
+			que.push(p->rchild);
+			postSeqVec.push_back(p->data);
+		}
+		else
+			postSeqVec.push_back(-1);//-1 means this node does not exist, just for filling this place.
+	}
+}
+
+/*
+* 获得双分支结点的数目
+*/
+template<class T>
+inline int BiTree<T>::getNodeCountDegree2(BiNode<T>* parent) {
+	if (!parent)//先指针判空
+		return 0;
+	if (parent->lchild && parent->rchild)
+		return 1 + getNodeCountDegree2(parent->lchild) + getNodeCountDegree2(parent->rchild);
+	else
+		return 0 + getNodeCountDegree2(parent->lchild) + getNodeCountDegree2(parent->rchild);
+}
 
 
 

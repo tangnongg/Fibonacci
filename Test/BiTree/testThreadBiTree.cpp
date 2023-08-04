@@ -9,6 +9,7 @@ TEST_CASE("testing for traverseLevelOrder member function of ThreadBiTree", "") 
 	threadBiTree.createBiTree_from_SqBiTree(sqBiTree);
 	//threadBiTree.traverseInOrder();
 	//threadBiTree.thread();
+	std::cout << "中序后继线索遍历: ";
 	threadBiTree.traverse_by_InfixThread();
 	std::cout << "***traverse_by_InfixThread***" << std::endl;
 }
