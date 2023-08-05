@@ -22,6 +22,7 @@ add_subdirectory(Stack)
 add_subdirectory(Queue)
 add_subdirectory(StackApplications)
 add_subdirectory(BinaryTree)
+add_subdirectory(Tree)
 add_subdirectory(Test)
 
 
@@ -37,6 +38,7 @@ target_link_libraries(Main PUBLIC Fibonaccilib
 						   PUBLIC Queuelib
 						   PUBLIC StackApplicationslib
 						   PUBLIC BiTreelib
+						   PUBLIC Treelib
 						   )	
 #target #include path						   
 target_include_directories(Main PUBLIC

@@ -9,7 +9,9 @@ add_executable(catchMain catchMain.cpp
 						 "Queue/testQueue.cpp" "Stack/testStack.cpp" "StackApplications/testStackApplications.cpp" 
 						BiTree/testBiTree.cpp
 						BiTree/testSqBiTree.cpp
-						 "BiTree/testThreadBiTree.cpp")
+						 "BiTree/testThreadBiTree.cpp"
+						Tree/testCSTree.cpp
+						 )
 
 
 target_link_libraries(catchMain 
@@ -22,5 +24,6 @@ target_link_libraries(catchMain
 					Queuelib
 					StackApplicationslib
 					BiTreelib
+					Treelib
 					)
 

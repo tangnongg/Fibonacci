@@ -5,12 +5,14 @@
 #include <iomanip>
 #include <cmath>
 
+template<class T> class CSTree;
 template<class T> class ThreadBiTree;
 template<class T> class BiTree;
 template <class T>
 class SqBiTree {
 	friend class BiTree<T>;
 	friend class ThreadBiTree<T>;
+	friend class CSTree<T>;
 private:
 	T* dataArr;
 	int size;//数组大小
