@@ -211,7 +211,7 @@ public:
 	* 二叉树的宽度
 	* the trick: 迭代in, out
 	*/
-	int getWidth(); 
+	int getWidth();
 };
 
 
