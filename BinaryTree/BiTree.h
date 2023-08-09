@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 #include <stack>
+#include <algorithm>//std::reverse()
+#include <queue>
 
 
 template<class T> class BiNode;
@@ -167,24 +169,49 @@ public:
 	/*
 	* 交换所有结点的左右子树
 	*/
-
-
-	/*
-	* 获取先序遍历第K个结点的值
-	*/
-
-	/*
-	* 对于每个值为X的结点，删除以它为根的子树，并释放相应空间
-	*/
+	void swap(BiNode<T>* parent);
+	void swap() {
+		swap(root);
+	}
 
 	/*
-	* 查找值为X的结点，打印它的所有祖先
-	* 假设元素值唯一
+	* 非递归先序遍历，获取先序遍历第K个结点的值
 	*/
+	const T& getKth_PreOrder(int k);
 
 	/*
-	* 找到p,q最近公共祖先结点
+	* 递归，对于每个值为X的结点，删除以它为根的子树，并释放相应空间
 	*/
+	void deleteSubTreeRootedNodeX(BiNode<T>* parent, const T& x);
+	void deleteSubTreeRootedNodeX(const T& x) {
+		if (root->data == x) {//上面那种方法忽略了root—>data的判断，这里补上
+			traversePostOrder_for_Delete(root);
+			root = nullptr;
+			return;
+		}
+		deleteSubTreeRootedNodeX(root, x);
+	}
+
+	/*
+	* 实现方法2，用引用，就不用隔一层判断data==x
+	* 递归，对于每个值为X的结点，删除以它为根的子树，并释放相应空间
+	*/
+	void deleteSubTreeRootedNodeX_Implement2_with_Ref(BiNode<T>*& parent, const T& x);
+	void deleteSubTreeRootedNodeX_Implement2_with_Ref(const T& x) {
+		deleteSubTreeRootedNodeX_Implement2_with_Ref(root, x);
+	}
+
+	/*
+	* p,q的最近公共祖先
+	* 假设元素值唯一，传入指针，返回指针的形式不便于测试
+	*/
+	const T& getClosestCommonAncestor_of_TwoNodes(const T& p, const T& q);
+
+	/*
+	* 二叉树的宽度
+	* the trick: 迭代in, out
+	*/
+	int getWidth(); 
 };
 
 
@@ -269,6 +296,8 @@ inline void BiTree<T>::printAlltoVecPreOrder(BiNode<T>* parent, std::vector<T>& 
 template<class T>
 inline void BiTree<T>::traverseLevelOrder(BiNode<T>* parent) {
 	Queue<BiNode<T>*> que(100);
+	if (!parent)
+		return;
 	que.push(parent);
 	BiNode<T>* p = nullptr;
 	while (!que.empty()) {
@@ -483,6 +512,146 @@ inline int BiTree<T>::getNodeCountDegree2(BiNode<T>* parent) {
 		return 0 + getNodeCountDegree2(parent->lchild) + getNodeCountDegree2(parent->rchild);
 }
 
+/*
+* 交换所有结点的左右子树
+*/
+template<class T>
+inline void BiTree<T>::swap(BiNode<T>* parent) {
+	if (!parent)
+		return;
+	std::swap<BiNode<T>*>(parent->lchild, parent->rchild);
+	swap(parent->lchild);
+	swap(parent->rchild);
+}
 
+/*
+* 非递归先序遍历，获取先序遍历第K个结点的值
+*/
+template<class T>
+inline const T& BiTree<T>::getKth_PreOrder(int k) {
+	BiNode<T>* p = root;
+	std::stack<BiNode<T>*> stk;
+	int cnt = 1;
+	while (p || !stk.empty()) {
+		if (p) {
+			stk.push(p);
+			if (cnt == k) {
+				return p->data;
+			}
+			++cnt;
+			p = p->lchild;
+		}
+		else {
+			p = stk.top();
+			stk.pop();
+			p = p->rchild;
+		}
+	}
+}
 
+/*
+* 递归，对于每个值为X的结点，删除以它为根的子树，并释放相应空间
+*/
+template<class T>
+inline void BiTree<T>::deleteSubTreeRootedNodeX(BiNode<T>* parent, const T& x) {
+	if (!parent)
+		return;
 
+	if (parent->lchild && parent->lchild->data == x) {//而不是判断parent.data==x, 为可能的删除操作保留parent
+		traversePostOrder_for_Delete(parent->lchild);
+		parent->lchild = nullptr;
+	}
+	else {
+		deleteSubTreeRootedNodeX(parent->lchild, x);
+	}
+	if (parent->rchild && parent->rchild->data == x) {
+		traversePostOrder_for_Delete(parent->rchild);
+		parent->rchild = nullptr;
+	}
+	else {
+		deleteSubTreeRootedNodeX(parent->rchild, x);
+	}
+}
+
+/*
+* 实现方法2，用引用，就不用隔一层判断data==x
+* 递归，对于每个值为X的结点，删除以它为根的子树，并释放相应空间
+*/
+template<class T>
+inline void BiTree<T>::deleteSubTreeRootedNodeX_Implement2_with_Ref(BiNode<T>*& parent, const T& x) {
+	if (!parent)
+		return;
+
+	if (parent->data == x) {//而不是判断parent.data==x, 为可能的删除操作保留parent
+		traversePostOrder_for_Delete(parent);
+		parent = nullptr;
+	}
+	else {
+		deleteSubTreeRootedNodeX_Implement2_with_Ref(parent->lchild, x);
+		deleteSubTreeRootedNodeX_Implement2_with_Ref(parent->rchild, x);
+	}
+}
+
+/*
+* p,q的最近公共祖先
+* 假设元素值唯一，传入指针，返回指针的形式不便于测试
+*/
+template<class T>
+inline const T& BiTree<T>::getClosestCommonAncestor_of_TwoNodes(const T& p, const T& q) {
+	std::vector<T> pathVecP;
+	std::vector<T> pathVecQ;
+	getPath_fromAncestortoDescendant(root, p, pathVecP);
+	getPath_fromAncestortoDescendant(root, q, pathVecQ);
+	std::reverse(pathVecP.begin(), pathVecP.end());
+	std::reverse(pathVecQ.begin(), pathVecQ.end());
+
+	std::vector<T>::iterator itp = pathVecP.begin();
+	std::vector<T>::iterator itq = pathVecQ.begin();
+	T pre = T();
+	for (; itp != pathVecP.end() && itq != pathVecQ.end(); ++itp, ++itq) {
+		if (*itp == *itq)
+			pre = *itp;
+		else
+			return pre;
+	}
+	throw "无公共结点, p and q does not exist in the same tree.";
+}
+
+/*
+* 二叉树的宽度
+* the trick: 迭代in, out
+*/
+template<class T>
+inline int BiTree<T>::getWidth() {
+	BiNode<T>* p = root;
+	std::queue<BiNode<T>*> que;
+	if (p)
+		que.push(p);
+	else
+		return 0;
+	/*initial in and out*/
+	int in = 1;//这（root)层入队的孩子结点数
+	int out = 0;//把上一层（上层入队的孩子）结点全出队（out=in)，把这层出队结点的孩子再入队
+	int maxIn = in;
+	while (!que.empty()) {
+		if (out == 0) {//update
+			out = in;
+			if (in > maxIn)
+				maxIn = in;
+			in = 0;
+		}
+		p = que.front();
+		que.pop();
+		--out;
+		if (p->lchild)
+		{
+			que.push(p->lchild);
+			++in;
+		}
+		if (p->rchild) {
+			que.push(p->rchild);
+			++in;
+		}
+	}
+	return maxIn;
+}
