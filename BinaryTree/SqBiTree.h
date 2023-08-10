@@ -4,6 +4,7 @@
 #include <initializer_list>
 #include <iomanip>
 #include <cmath>
+#include <vector>
 
 template<class T> class CSTree;
 template<class T> class ThreadBiTree;
@@ -52,7 +53,20 @@ public:
 	* 返回两个结点的最近公共祖先在数组中的下标(=编号）
 	*/
 	int getClosestCommonAncestor_of_TwoNodes(int aNodeNum, int bNodeNum);
+
+	/*
+	* 408真题
+	* 是否时二叉排序树（二叉搜索树），结点全为正整数。
+	* note:BST的定义是，左子树中所有node < root < 右子树中所有node
+	* 正确实现：BST的中序遍历应该是严格升序的
+	*/
+	void traverseInOrder(int i, std::vector<int>& inSeq);
+	bool isBST();
 };
+
+
+
+
 
 template<class T>
 inline SqBiTree<T>::SqBiTree(const int& size, const int& count, std::initializer_list<T> iniList) :
@@ -172,3 +186,31 @@ inline int SqBiTree<T>::getClosestCommonAncestor_of_TwoNodes(int aNodeNum, int b
 	}
 	return aNodeNum;
 }
+
+/*
+* 408真题
+* 是否时二叉排序树（二叉搜索树），结点全为正整数。
+* note:BST的定义是，左子树中所有node < root < 右子树中所有node
+* 正确实现：BST的中序遍历应该是严格升序的。实现顺序存储的二叉树的中序遍历（递归）。
+*/
+template<class T>
+inline void SqBiTree<T>::traverseInOrder(int i, std::vector<int>& inSeq) {
+	if (i > count || dataArr[i] == -1)//diff:parent=null
+		return;
+
+	traverseInOrder(2 * i, inSeq);
+	inSeq.push_back(dataArr[i]);
+	traverseInOrder(2 * i + 1, inSeq);
+}
+
+template<class T>
+inline bool SqBiTree<T>::isBST() {
+	std::vector<int> inSeq;
+	traverseInOrder(1, inSeq);
+	for (int i = 0; i <= inSeq.size() - 2; ++i) {
+		if (inSeq[i] >= inSeq[i + 1])
+			return false;
+	}
+	return true;
+}
+

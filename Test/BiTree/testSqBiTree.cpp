@@ -42,4 +42,15 @@ TEST_CASE("testing for basic operations of SqBiTree", "") {
 	CHECK(biTree4.getClosestCommonAncestor_of_TwoNodes(4, 3) == 1);
 	CHECK(biTree4.getClosestCommonAncestor_of_TwoNodes(2, 3) == 1);
 	CHECK(biTree4.getClosestCommonAncestor_of_TwoNodes(1, 1) == 1);
+
+	//SqBiTree<int> biTree5(8, 7, { 2,1,4,-1,-1,0,5 });
+	//CHECK(false == biTree5.isBST());
+	//SqBiTree<int> biTree6(8,7, { 2,1,4,-1,-1,3,5});
+	//CHECK(true == biTree6.isBST());
+
+	SqBiTree<int> biTree5(8, 7, { 2,1,4,-1,-1,0,5 });
+	CHECK(false == biTree5.isBST());
+	SqBiTree<int> biTree6(8, 7, { 2,1,4,-1,-1,3,5 });
+	CHECK(true == biTree6.isBST());
+
 }

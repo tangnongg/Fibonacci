@@ -8,6 +8,7 @@
 #include <stack>
 #include <algorithm>//std::reverse()
 #include <queue>
+#include <deque>//double end queue, pop_front(),pop_back()
 
 
 template<class T> class BiNode;
@@ -212,6 +213,32 @@ public:
 	* the trick: 迭代in, out
 	*/
 	int getWidth();
+
+	/*
+	* 遍历二叉树的同时，输出当前结点到root的路径长度curHigh-1(或者说当前结点所在层次curHigh，root在第1层）
+	* 这里选择先序递归遍历
+	*/
+	void printPathLength_AllNodes(int curHigh, BiNode<T>* parent);
+	void printPathLength_AllNodes() {
+		printPathLength_AllNodes(1, root);
+	}
+
+	/*
+	* 408真题
+	* calculate the WPL of the binary tree，which is the sum of the path lengths of all nodes that are leaf. 
+	* 这里选择先序递归遍历
+	* 类模板的成员函数的特例化：只特例化T=int for calculating the WPL.
+	*/
+	void getWPL(T& sumPL, int curHigh, BiNode<T>* parent);
+	int getWPL();
+
+	/*
+	* 408真题
+	* 根据表达式树输出中序表达式，必须加括号保证运算优先级
+	* the key:括号的添加时机
+	*/
+	void generateInfixExpression(std::deque<char>& inExp, BiNode<T>* parent);
+	void generateInfixExpression();
 };
 
 
@@ -244,8 +271,10 @@ template<>
 inline void BiTree<char>::createBiTree_from_SqBiTree(SqBiTree<char>& sqBiTree, int i, BiNode<char>*& parent) {
 	if (parent != nullptr)//初始树必须为空树，避免内存泄露
 		return;
-	if (sqBiTree.dataArr[i] != '*' && i <= count)
+	if (sqBiTree.dataArr[i] != '#' && i <= sqBiTree.count)
 		parent = new BiNode<char>(sqBiTree.dataArr[i], nullptr, nullptr);
+	else
+		return;
 	createBiTree_from_SqBiTree(sqBiTree, 2 * i, parent->lchild);
 	createBiTree_from_SqBiTree(sqBiTree, 2 * i + 1, parent->rchild);
 }
@@ -547,6 +576,7 @@ inline const T& BiTree<T>::getKth_PreOrder(int k) {
 			p = p->rchild;
 		}
 	}
+	throw "there are not k nodes.";
 }
 
 /*
@@ -654,4 +684,71 @@ inline int BiTree<T>::getWidth() {
 		}
 	}
 	return maxIn;
+}
+
+/*
+* 遍历二叉树的同时，输出当前结点到root的路径长度curHigh-1(或者说当前结点所在层次curHigh，root在第1层）
+* 这里选择先序递归遍历
+*/
+template<class T>
+inline void BiTree<T>::printPathLength_AllNodes(int curHigh, BiNode<T>* parent) {
+	if (!parent)
+		return;
+	std::cout << parent->data << " node's path length from the root: " << curHigh - 1 << std::endl;
+	printPathLength_AllNodes(curHigh + 1, parent->lchild);
+	printPathLength_AllNodes(curHigh + 1, parent->rchild);
+}
+
+/*
+* calculate the WPL of the binary tree，which is the sum of the path lengths of all nodes that are leaf.
+* 这里选择先序递归遍历
+* 类模板的成员函数的特例化：只特例化T=int for calculating the WPL.
+*/
+template<>
+inline void BiTree<int>::getWPL(int& sumPL, int curHigh, BiNode<int>* parent)
+{
+	if (!parent)
+		return;
+	if (!(parent->lchild) && !(parent->rchild))
+		sumPL += parent->data * (curHigh - 1);
+	getWPL(sumPL, curHigh + 1, parent->lchild);
+	getWPL(sumPL, curHigh + 1, parent->rchild);
+}
+template<>
+inline int BiTree<int>::getWPL()
+{
+	int sumPL = 0;
+	getWPL(sumPL, 1, root);
+	return sumPL;
+}
+
+/*
+* 根据表达式树输出中序表达式，必须加括号保证运算优先级
+* the key:括号的添加时机
+*/
+template<>
+inline void BiTree<char>::generateInfixExpression(std::deque<char>& inExp, BiNode<char>* parent)
+{
+	if (!parent)
+		return;
+	if (parent->lchild || parent->rchild)//对于leaf node，不加（），冗余
+		inExp.push_back('(');
+	generateInfixExpression(inExp, parent->lchild);
+	inExp.push_back(parent->data);
+	generateInfixExpression(inExp, parent->rchild);
+	if (parent->lchild || parent->rchild)//对于leaf node，不加（），冗余
+		inExp.push_back(')');
+}
+
+template<>
+inline void BiTree<char>::generateInfixExpression()
+{
+	std::deque<char> inExp;
+	generateInfixExpression(inExp, root);
+	inExp.pop_back();//改用deque，去掉最外层（）
+	inExp.pop_front();
+	std::cout << "根据表达式树生成中缀表达式：";
+	for (const auto& i : inExp)
+		std::cout << i << ' ';
+	std::cout << std::endl;
 }

@@ -166,3 +166,33 @@ TEST_CASE("testing for member functions of BiTree, getWidth", "") {
 		CHECK(3 == biTree1.getWidth());
 	}
 }
+
+TEST_CASE("testing for member functions of BiTree, printPathLength_AllNodes", "") {
+	std::cout << "***testing for member functions of BiTree, printPathLength_AllNodes***" << std::endl;
+	SqBiTree<int> sqBiTree1(9, 8, { 1,2,3,4,5,6,7,8 });
+	BiTree<int> biTree1;
+	biTree1.createBiTree_from_SqBiTree(sqBiTree1);
+	biTree1.printPathLength_AllNodes();
+	std::cout << "***testing for member functions of BiTree, printPathLength_AllNodes***" << std::endl;
+}
+
+TEST_CASE("testing for member functions of BiTree, getWPL", "") {
+	SqBiTree<int> sqBiTree1(9, 8, { 1,2,3,4,5,6,7,8 });
+	BiTree<int> biTree1;
+	biTree1.createBiTree_from_SqBiTree(sqBiTree1);
+	CHECK(biTree1.getWPL() == 60);	
+
+	SqBiTree<int> sqBiTree2(8, 7, { 1,2,3,4,5,6,7 });
+	BiTree<int> biTree2;
+	biTree2.createBiTree_from_SqBiTree(sqBiTree2);
+	CHECK(biTree2.getWPL() == 44);
+}
+
+TEST_CASE("testing for member functions of BiTree, generateInfixExpression", "") {
+	std::cout << "***testing for member functions of BiTree, generateInfixExpression***" << std::endl;
+	SqBiTree<char> sqBiTree1(16, 15, { '*','+','*','a','b','c','-','#','#','#','#','#','#','#','d'});
+	BiTree<char> biTree1;
+	biTree1.createBiTree_from_SqBiTree(sqBiTree1);
+	biTree1.generateInfixExpression();
+	std::cout << "***testing for member functions of BiTree, generateInfixExpression***" << std::endl;
+}
